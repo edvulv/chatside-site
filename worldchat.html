@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script type="module" src="start.js"></script>
+
+  <script src="createHeaderFooter.js"></script>
+</head>
+<body>
+<header></header>
+
+<main>
+  <section class="active-users">
+    <figure class="user-prof">
+      <img src="usericon.png" alt="user">
+      <span class="username">username</span> (you)
+    </figure>
+  </section>
+
+
+  <section>
+    <div class="chat">
+      <p class="user-mssg"><span class="chat-username">User: </span>IS this working?</p>
+      <p class="user-mssg"><span class="chat-username">User: </span>no.</p>
+      <p class="user-mssg"><span class="chat-username">User: </span>Hello!</p>
+    </div>
+    <div class="chat-input">
+        <input type="text" id="chat-input" placeholder="Type Chat Message...">
+        <button>Send message</button>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
+<style>
+  section {
+    padding-bottom: 1rem;
+  }
+
+  figure {
+    height: 100px;
+    width: 100px;
+    display: inline-block;
+  }
+
+  img {
+    height: 100%;
+  }
+
+  .chat {
+    border: 2px solid black;
+    width: 1000px;
+    height: 600px;
+    overflow: auto;
+  }
+
+  /* Optional: to hide the default scrollbar on Chrome */
+  .chat::-webkit-scrollbar {
+    width: 0.5em;
+  }
+
+  .chat::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .chat::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<style>
+  .logout {
+  }
+  .username {
+    color: black;
+    font-weight: 600;
+    padding: 5px;
+    -webkit-border-radius: 25%;
+  }
+
+  .profile span {
+    margin-right: 1rem;
+  }
+  .logout button{
+    color: black;
+    font-size: 1.1rem;
+    background-color: transparent;
+    border: none;
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    padding: 10px;
+  }
+
+  .logo a {
+    color: black;
+    font-size: 24px;
+    text-decoration: none;
+  }
+
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+
+  .menu li {
+    margin-right: 20px;
+  }
+
+  .menu a {
+    color: black;
+    text-decoration: none;
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile img {
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+</style>
+
+<script>
+  // Get initial data from database
+
+  const interval = setInterval(() => {
+    if (window.connectAndCheckCompleted) {
+      clearInterval(interval);
+      // Do something here after connectAndCheckCompleted is true
+      console.log("Connect and check completed!");
+      setVariables()
+    }
+  }, 100); // Check every 100 milliseconds
+
+  async function setVariables() {
+    const activeUsers = await firebase.database().ref(`worldchat/activeUsers`).once("value");
+    const chats = await firebase.database().ref(`worldchat/chats`).once("value");
+    console.log(activeUsers.val());
+    console.log(chats.val());
+
+    //user: "user1", message: "Hello, world!", timestamp: Date.now()
+    const worldchat = {
+      activeUsers: activeUsers.val(), //userid
+      chats: chats.val(),
+      users: []
+    };
+
+    const activeUsersList = worldchat.activeUsers.split(",");
+    const chatList = worldchat.chats;
+
+    // Add active users to list
+    const activeUsersDisplay = document.querySelector(".active-users");
+    let chatUsers = [];
+    for (let user of activeUsersList) {
+      var id = await getUserFromId(user)
+      var randomColor = getRandomColor()
+      assignColorToUser(user, randomColor)
+      var userelm = [
+        id = {
+          username: user,
+          chatColor: randomColor
+        }
+      ]
+      worldchat.users.push(userelm)
+      const userDisplay = `<figure class="user-prof">
+      <img src="usericon.png" alt="user">
+      <span class="chat-username" style="color: ${randomColor}">${user}</span>
+    </figure>`;
+      chatUsers.push(userDisplay)
+    }
+    Array.from(chatUsers).forEach((user) => {
+      activeUsersDisplay.innerHTML += user
+    })
+
+    // Add chat messages to list
+    const chatMessagesList = document.querySelector(".chat");
+    chatMessagesList.innerHTML = ""
+    let chatElements = [];
+    for (let chat of chatList) {
+      var chatMessage = `<p class="user-mssg"><span class="chat-username">${chat.user}: </span>${chat.message}</p>`;
+      chatElements.push(chatMessage)
+    }
+    Array.from(chatElements).forEach((element) => {
+      chatMessagesList.innerHTML += element
+    })
+
+
+    // Check for changes every 2 seconds
+    setInterval(() => {
+      // Get updated data from database (replace with your own implementation)
+      const updatedWorldChat = getUpdatedWorldChat();
+
+      // Check for changes in active users
+      if (updatedWorldChat.activeUsers !== worldchat.activeUsers) {
+        const newActiveUsersList = updatedWorldChat.activeUsers.split(",");
+        activeUsersList.splice(0, activeUsersList.length, ...newActiveUsersList);
+
+        // Update active users display
+        activeUsersDisplay.innerHTML = "";
+        for (let user of activeUsersList) {
+          const userDisplay = document.createElement("li");
+          userDisplay.innerText = user;
+          activeUsersDisplay.appendChild(userDisplay);
+        }
+      }
+
+      // Check for changes in chat messages
+      if (updatedWorldChat.chats.length > chatList.length) {
+        const newChats = updatedWorldChat.chats.slice(chatList.length);
+        chatList.push(...newChats);
+
+        // Add new chat messages to list
+        for (let chat of newChats) {
+          const chatMessage = document.createElement("li");
+          chatMessage.innerText = `${chat.user}: ${chat.message}`;
+          chatMessagesList.appendChild(chatMessage);
+        }
+      }
+
+      // Update worldchat variable
+      worldchat.activeUsers = updatedWorldChat.activeUsers;
+      worldchat.chats = updatedWorldChat.chats;
+    }, 2000);
+  }
+
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  // Function to assign a color to a user element in the list
+  function assignColorToUser(username, color) {
+    const userElements = document.getElementsByClassName(".chat-username");
+    for (let user of userElements) {
+      if (user.textContent === username) {
+        user.setAttribute("id", color);
+        user.style.color = color;
+        break;
+      }
+    }
+  }
+
+  async function sendMessage() {
+    const messageInput = document.getElementById('chat-input');
+    const messageText = messageInput.value.trim();
+    if (messageText === '') {
+      return;
+    }
+
+    // Save the current chat id
+    const chatId = currentchat;
+
+    // Get the last message number from the database
+    const lastMessageSnapshot = await firebase.database().ref(`chats/${chatId}/lastMessage`).once('value');
+    const lastMessageNumber = lastMessageSnapshot.val() || 0;
+
+    // Create the message ID in the "mX" format
+    const messageId = `m${lastMessageNumber + 1}`;
+
+    // Create the message object
+    const message = {
+      sender: userInfo.id,
+      text: messageText,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    // Send the message to the database
+    await firebase.database().ref(`chats/${chatId}/messages/${messageId}`).set(message);
+
+    // Update the last message number in the database
+    await firebase.database().ref(`chats/${chatId}/lastMessage`).set(lastMessageNumber + 1);
+
+    // Clear the message input
+    messageInput.value = '';
+  }
+
+
+  function getUpdatedWorldChat() {
+
+
+  }
+
+</script>

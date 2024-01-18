@@ -1,0 +1,641 @@
+/** {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}*/
+
+aside {
+    background-color: #eee;
+    padding: 2rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    overflow-y: hidden;
+    margin: 0;
+    border-radius: 30px;
+}
+
+html {
+    overflow-y: hidden;
+}
+
+
+main {
+    height: 100vh;
+    display: grid;
+    grid-template-areas: "aside section div";
+    grid-template-columns: 30% calc(70% - 1rem); /* Single column */
+    grid-template-rows: auto; /* First row for aside, second row for section */
+    box-sizing: border-box;
+    grid-gap: 1rem;
+    padding-bottom: 5rem;
+}
+
+article img {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    border-radius: 50%;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+section {
+    width: 75%;
+    height: 80vh;
+    position: relative;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    background-color: #f1f1f1;
+    box-sizing: border-box;
+    overflow-y: scroll;
+}
+
+section input[type="text"] {
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    width: 80%;
+    font-size: 1rem;
+    outline: 2px solid lightgray;
+    transition-duration: 0.4s;
+}
+
+section button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 15%;
+}
+
+.message-right {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    margin: 10px 0;
+}
+.message-left p, .message-right p {
+    font-size: 1rem; /* Increase font size for message bubbles */
+    max-width: 70%; /* Limit the width of message bubbles */
+    margin: 0;
+    padding: 10px; /* Add padding to the message bubbles */
+    border-radius: 20px; /* Make the bubbles more round */
+}
+
+/* Style the left and right message bubbles */
+.message-left p {
+    background-color: #E0E0E0;
+}
+
+.message-right p {
+    background-color: #6CA9FF;
+    color: white;
+}
+
+.contact-list {
+    list-style: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 450px;
+    padding: 10px;
+}
+
+.chat-message {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    transition-duration: 0.2s;
+    border-radius: 20px;
+    overflow: hidden; /* Clip overflow content */
+    white-space: nowrap; /* Prevent line breaks */
+    text-overflow: ellipsis; /* Display ellipsis (...) for overflow */
+    position: relative;
+}
+
+.chat-message:hover {
+    background-color: #7F7F7F;
+    color: white;
+}
+
+.chat-message.selected {
+    background-color: lightgreen; !important;
+}
+
+.notification {
+    /*
+    background-color: lawngreen;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(30%, 30%);
+    z-index: 3;*/
+    background-color: blue;
+    color: white;
+    padding-right: 6px;
+    padding-left: 6px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.notification.none {
+    display: none;
+}
+
+#message-section {
+    padding: 0;
+    position: relative;
+    overflow-y: hidden;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    height: 100%;
+    width: 100%;
+    border-radius: 30px;
+}
+
+
+#message-container {
+    padding: 2rem;
+    position: relative;
+    z-index: 1; /* Set a higher z-index for the message container */
+    padding-bottom: 10rem;
+    overflow-x: scroll;
+}
+
+#message-input-container {
+    background: linear-gradient(to top, rgba(211, 211, 211, 0.9), transparent);
+    padding: 2rem;
+    margin: 0;
+    position: absolute;
+    display: flex;
+    bottom: 0; /* Position the input container at the bottom */
+    width: 100%;
+    z-index: 2; /* Set a lower z-index for the input container */
+    max-width: calc(100% - 2rem);
+
+}
+
+#message-input {
+    flex-grow: 1;
+    min-width: 22rem;
+    max-width: 60rem;
+    flex-wrap: wrap;
+    width: 100%;
+
+}
+
+#send-message-btn {
+    flex-grow: 0;
+    min-width: 10rem;
+    max-width: 15rem;
+    width: auto;
+}
+
+.roundwhitebutton {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 25px;
+    font-family: 'Open Sans', sans-serif;
+    padding: 10px;
+    font-size: 1.4rem;
+    transition: 0.4s;
+}
+.roundwhitebutton span{
+    font-weight: 600;
+}
+.roundwhitebutton:hover {
+    background-color: lightgray;
+    border: 1px solid grey;
+    border-radius: 25px;
+    color: #7F7F7F;
+}
+
+#new-chat-window {
+    background-color: white;
+    border: 1px solid lightgray;
+    position: fixed; /* Change to fixed positioning */
+    top: 50%; /* Set to 50% from the top */
+    left: 50%; /* Set to 50% from the left */
+    transform: translate(-50%, -50%); /* Center the element */
+    padding: 3rem;
+    z-index: 2;
+    /*
+    max-height: 500px;
+    max-width: 700px;*/
+    height: 400px;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Box shadow properties */
+    z-index: 5;
+}
+
+
+.hide {
+    display: none;
+}
+
+.search-results {
+    width: 300px;
+    height: 200px;
+    border: 1px solid lightgray;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 12px;
+}
+.search-results {
+    overflow-y: scroll;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background-color: lightgray;
+    transition: 0.4s;
+}
+.user-card:hover {
+    background-color: lightblue;
+    color: #7F7F7F;
+}
+
+.search-results i {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.search-results p {
+    margin: 0;
+}
+
+span#username-chat {
+    font-size: 2rem;
+    border: 1px solid #007bff;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 12px;
+    background-color: white;
+    max-width: min-content;
+    /*
+    border-bottom: dashed black;    */
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 3px;
+    transition: background-color 0.4s;
+}
+
+/* Style the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+    background-color: lightgray;
+}
+
+/* Style the scrollbar track when scrollbar is hovered */
+::-webkit-scrollbar-track {
+    background-color: gray;
+    border-radius: 3px;
+}
+
+/* Style the scrollbar corner */
+::-webkit-scrollbar-corner {
+    background-color: gray;
+}
+
+.hamburger {
+    display: none;
+}
+
+@media (max-width: 1000px) {
+
+    html {
+        overflow-y: scroll;
+    }
+    /* Override styles for smaller screens */
+    body {
+        overflow-x: hidden;
+    }
+
+    main {
+        display: grid;
+        grid-template-areas: "aside"
+                            "section";
+        grid-template-columns: 100%; /* Single column */
+        grid-template-rows: 300px auto; /* First row for aside, second row for section */
+        box-sizing: border-box;
+    }
+
+    aside {
+        grid-area: aside;
+        grid-row: 1; /* Place aside in the first row */
+        width: 100%; /* Take full width */
+        max-width: calc(100vw - 2rem); /* Subtract padding */
+        height: auto; /* Adjust height automatically */
+        padding: 1rem;
+        overflow-x: auto; /* Scroll contacts horizontally */
+    }
+
+    section {
+        grid-area: section;
+        grid-row: 2; /* Place section in the second row */
+        width: 100%;
+        height: 100%;
+        padding: 2rem;
+        overflow-y: scroll;
+    }
+
+    #message-section {
+        padding: 0;
+        position: relative;
+        overflow-y: hidden;
+        width: 100%;
+        height: calc(100vh - 30%); /* Set the height to 100% of the viewport's height */
+    }
+
+    #message-container {
+        padding-top: 0;
+        max-width: calc(100vw - 2rem); /* Subtract padding */
+        overflow-x: hidden; /* Prevent x-scroll */
+    }
+
+    #message-input-container {
+        background: linear-gradient(to top, rgba(211, 211, 211, 0.9), transparent);
+        padding: 2rem;
+        margin: 0;
+        position: absolute;
+        display: flex;
+        bottom: 0; /* Position the input container at the bottom */
+        width: 100%;
+        max-width: calc(100vw - 2rem); /* Subtract padding */
+        z-index: 2; /* Set a lower z-index for the input container */
+    }
+
+    #message-input {
+        flex-grow: 1;
+        min-width: 22rem;
+        max-width: 60rem;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    #send-message-btn {
+        flex-grow: 0;
+        min-width: 10rem;
+        max-width: 15rem;
+        width: auto;
+    }
+
+
+
+    .user-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background-color: lightgray;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        transition: 0.4s;
+    }
+
+    .user-card:hover {
+        background-color: lightblue;
+        color: #7F7F7F;
+    }
+
+    .user-card i {
+        background-color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .user-card p {
+        margin: 0;
+    }
+
+    .message-left p, .message-right p {
+        font-size: 2.5rem; /* Decrease font size for message bubbles */
+        max-width: 50vh; /* Adjust width of message bubbles */
+        margin: 0;
+        padding: 10px; /* Add padding to the message bubbles */
+        border-radius: 20px; /* Make the bubbles more round */
+    }
+
+    /* Style the left and right message bubbles for mobile */
+    .message-left p {
+        background-color: #E0E0E0;
+        margin-right: auto; /* Push the left bubble to the left */
+        margin-left: 20px; /* Add some space on the left */
+        max-width: 500px;
+        word-wrap: break-word; /* Allow long words to be broken and wrapped */
+        padding: 10px; /* Add padding to the message bubbles */
+        border-radius: 20px; /* Make the bubbles more round */
+        font-size: 2.5rem; /* Decrease font size for message bubbles */
+        margin: 0;
+    }
+
+
+    .message-right p {
+        background-color: #6CA9FF;
+        color: white;
+        margin-left: auto; /* Push the right bubble to the right */
+        margin-right: 20px; /* Add some space on the right */
+    }
+
+    #new-chat-window {
+        grid-row: span 2; /* Make the chat window span two rows */
+        width: 90%; /* Adjust width for smaller screens */
+        height: 70vh; /* Adjust height for smaller screens */
+        padding: 2rem;
+    }
+
+    .contact-list {
+        list-style: none;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        height: 100px;
+        padding: 10px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .chat-message {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        transition-duration: 0.2s;
+        padding: 15px;
+        height: 40px;
+        width: 175px;
+        margin-right: 2rem;
+        border-radius: 20px;
+        min-width: 150px;
+        max-width: 230px;
+        overflow: hidden; /* Clip overflow content */
+        white-space: nowrap; /* Prevent line breaks */
+        text-overflow: ellipsis; /* Display ellipsis (...) for overflow */
+    }
+
+    /* Style the contact card */
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        border-radius: 10px;
+        transition: background-color 0.4s;
+    }
+
+    .contact-info:hover {
+        background-color: #7F7F7F;
+        color: white;
+    }
+
+    .contact-info img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .contact-info h2 {
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .contact-info p {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    #message-input, #send-message-btn i {
+        font-size: 3rem;
+    }
+
+    #username-chat {
+        font-size: 3rem;
+    }
+
+    .roundwhitebutton {
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 35px;
+        font-family: 'Open Sans', sans-serif;
+        padding: 10px;
+        transition: 0.4s;
+        font-size: 3rem;
+    }
+    .roundwhitebutton span{
+        font-size: 3rem;
+    }
+
+    /*MOVILE MENU*/
+    .mobile-menu {
+        display: none; /* Hide the mobile menu by default */
+        position: relative;
+    }
+
+    /*
+    .hamburger {
+        display: block;
+        cursor: pointer;
+        padding: 10px;
+    }*/
+
+
+    .hamburger {
+        display: block;
+    }
+
+    .bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: white;
+        margin: 5px auto;
+        transition: 0.4s;
+    }
+
+    .menu {
+        position: absolute;
+        top: 40px; /* Adjust the top position */
+        right: 0;
+        background-color: #E56E24;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        width: 100%; /* Take full width */
+        z-index: 6; /* Ensure menu appears above other elements */
+        display: none; /* Hide the menu by default */
+    }
+
+    .mobile-menu.open .menu {
+        display: block; /* Show the menu when the mobile menu is open */
+    }
+
+    .mobile-menu.open .bar:nth-child(1) {
+        transform: rotate(-45deg) translate(-4px, 5px);
+    }
+
+    .mobile-menu.open .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu.open .bar:nth-child(3) {
+        transform: rotate(45deg) translate(-4px, -5px);
+    }
+
+    /* Add the following styles to ensure the hamburger button is visible */
+
+    /*
+    .hamburger .bar {
+        display: block;
+    }*/
+
+    /* Rest of your existing styles for the header */
+
+}

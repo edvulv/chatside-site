@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website Title</title>
+    <!-- Make sure to include the FontAwesome CSS if you're using icons from it -->
+    <link rel="stylesheet" href="path-to-font-awesome/css/all.css">
+    <style>
+        #userandimg {
+            display: flex;
+            align-items: center;
+            transition: 0.5s;
+            border-radius: 0px;
+        }
+        #userandimg:hover {
+            background-color: #7F7F7F;
+            border-radius: 15px 15px 0 0;
+        }
+        #dragdownlist {
+            position: absolute;
+            display: none;
+            opacity: 0;
+        }
+        #userandimg:hover #dragdownlist{
+            opacity: 1;
+        }
+        #profile-figure {
+            width: 50px;
+            height: 50px;
+            display: flex; /* Bruker flex for å sentrere bildet inne i figuren */
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Forhindrer bildet fra å gå utenfor figuren sin ramme */
+        }
+
+        .profile-pic {
+            margin: 0;
+            width: 100%; /* Bredden vil være 100% av figuren */
+            height: 100%; /* Høyden vil også være 100% av figuren */
+            object-fit: contain; /* Sikrer at hele bildet passer innenfor uten å beskjære */
+        }
+
+
+        /* Add styles for .hamburger here if needed */
+    </style>
+</head>
+<body>
+<header class='navbar'>
+    <div class="logo">
+        <a href="home.html">Stasen</a>
+    </div>
+    <button id="hamburger-button" onclick="hamburger()">Hamburger</button>
+    <nav class="menu">
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="#">Videos</a></li>
+            <li><a href="store.html">Store</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Articles</a></li>
+            <li><a href="messages.html">Messages</a></li>
+            <li><a href="mycontent.html">Your Content</a></li>
+            <li><a href="ourservices.html">Our Services</a></li>
+        </ul>
+        <i class="fas fa-arrow-down" onclick="hamburger()"></i>
+    </nav>
+    <div class="profile">
+        <span class="logout"><button onclick="logOut()">Log out</button></span>
+        <div id="userandimg">
+            <a href="editprofile.html" class="username">User Name</a>
+            <figure id="profile-figure">
+                <img src="profilepic.png" alt="User Profile Picture" class="profile-pic"/>
+            </figure>
+
+        </div>
+        <!--
+        <div id="dragdownlist">
+            <a>Edit Profile</a>
+            <a>Profile Page</a>
+        </div>-->
+    </div>
+</header>
+<script>
+    function hamburger() {
+        var menu = document.querySelector(".menu ul");
+        menu.classList.toggle("hamburger");
+    }
+</script>
+</body>
+</html>

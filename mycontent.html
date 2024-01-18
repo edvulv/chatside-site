@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script src="fileupload.js"></script>
+  <script type="module" src="start.js"></script>
+
+  <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+  <!----Create Footer And Header from components----->
+  <script src="createHeaderFooter.js"></script>
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="header.css">
+
+  <meta charset="UTF-8">
+  <title>My Content</title>
+  <!--<script src="connect.js"></script>--->
+  <link rel="stylesheet" href="default.css">
+</head>
+<body>
+<header></header>
+<main>
+  <div class="home-page">
+    <section class="welcome">
+      <h1>Welcome <span class="username">User Name</span></h1>
+      <h2>What do you wanna do?</h2>
+      <div class="selection-container">
+        <button class="selection-button">Send Messages</button>
+        <button class="selection-button">Create Articles</button>
+        <button class="selection-button" onclick="toggleDiv()">Upload Image</button>
+        <a href="messages.html" class="selection-button">Send Messages</a>
+      </div>
+    </section>
+    <section class="button-menu">
+
+      <a href="countdown.html" class="button-article">
+        <img src="https://www.allrecipes.com/thmb/zN81HQ86Fa2rHnkH-KUvUf6pBZE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Cuts-of-Beef-3x2-1-a557f31f8b13462185b4f2c17ab5b746.png" alt="Article 1" />
+        <h2>Live Calendars</h2>
+      </a>
+      <a href="./economics/home.html" class="button-article">
+        <img src="https://www.marketplace.org/wp-content/uploads/2023/04/USdollar.jpg?fit=2800%2C1866" alt="Article 1" />
+        <h2>Economics</h2>
+      </a>
+      <a href="countdown.html" class="button-article">
+        <img src="article1.jpg" alt="Article 1" />
+        <h2>Liv</h2>
+      </a>
+
+    </section>
+  </div>
+</main>
+<footer></footer>
+
+</body>
+</html>

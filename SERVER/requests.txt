@@ -1,0 +1,9 @@
+Requests:
+
+rq_ping: ping pong kall for å sjekke at det funker
+rq_mssg: chatid, meldingid (mX), sender (usrid), text "hello", timestamp (06.05.23:13:15): sende melding til bruker
+rq_frnrq: venneforespørsel, content -> userid -> requests: from usrid type: frnrq
+
+rq_trsfr: transfer money, usrid, amount (+/-)
+rq_buy: buy stock, usrid, stockid, investment, stocksbought
+rq_sell: sell stock, usrid, stockid, stocksells

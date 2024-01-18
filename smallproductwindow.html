@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product</title>
+    <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+    <script src="connect.js"></script>
+    <script src="checkLogin.js"></script>
+    <script src="datetimeconvert.js"></script>
+    <script type="module" src="start.js"></script>
+
+    <link rel="stylesheet" href="smallsitestyle.css">
+</head>
+<body>
+  <div class="loader"></div>
+</body>
+</html>
+
+<script>
+  window.addEventListener("load", function () {
+    setTimeout(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get('productid');
+      funtion1(productId)
+    }, 1000);
+  });
+
+  async function funtion1(prodID) {
+      try {
+          const snapshot = await firebase.database().ref("store").get();
+          const foundItemSnapshot = snapshot.child(prodID);
+
+          if (foundItemSnapshot.exists()) {
+              const foundItem = foundItemSnapshot.val();
+              var body = document.getElementsByTagName("body")[0];
+              body.innerHTML = `<span>User: ${userInfo.username}</span>
+                                  <p>Seller: ${foundItem.seller}</p>
+                                  <p>ProductTitle: ${foundItem.listingTitle}</p>
+                                  <p>Tags: ${foundItem.tags}</p>
+                                  <p>Price: ${foundItem.price}$</p>
+                                  <img src="${findImage(foundItem.img)}">
+                                  <p>Productname: ${foundItem.itemName}</p>
+                                  <p>Category: ${foundItem.category}</p>
+                                  <p>Date: ${formatToRead(foundItem.date)} <p style="font-weight: 600">(${foundItem.date})</p> </p>
+                                  <p>Sold?: ${foundItem.soldstatus}</p>`
+
+              // You can open the product page or do something with the found item here
+              return foundItem;
+          } else {
+              console.log(`Item with prodID "${prodID}" not found in the store.`);
+              return null;
+          }
+      } catch (error) {
+          console.error(error);
+          return null;
+      }
+  }
+
+
+</script>

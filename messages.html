@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script src="fileupload.js"></script>
+  <script type="module" src="start.js"></script>
+  <link rel="stylesheet" href="../fonts/css/all.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap" rel="stylesheet">
+
+  <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+    <!----Create Footer And Header from components----->
+    <script src="createHeaderFooter.js"></script>
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+
+    <script src="fetchElements.js"></script>
+
+  <meta charset="UTF-8">
+  <title>Inbox</title>
+  <!--<script src="connect.js"></script>--->
+  <link rel="stylesheet" href="default.css">
+  <link rel="stylesheet" href="messages.css">
+</head>
+
+
+<script>
+    // Fetch chat rooms
+    let chatrooms = [];
+    let contacts = [];
+    var chatroomid = 0
+    var chatwithuserid
+    let largestMessageNumber = 0;
+    var allowUpdate = false
+    function GetChats() {
+        const interval = setInterval(() => {
+            if (window.connectAndCheckCompleted) {
+                clearInterval(interval);
+                    // Do something here after connectAndCheckCompleted is true
+                    //GetContacts()
+              
+                loadContactsAndCreateElements();
+                refreshChat()
+            }
+        }, 100); // Check every 100 milliseconds
+    }
+    GetChats()
+
+    async function loadContactsAndCreateElements() {
+        const chatroomIds = await GetChatroomsWithUser(userInfo);
+        const contactList = await GetContacts(chatroomIds, userInfo);
+        console.log("boogaDOIGDOIGA")
+        createContactElements(contactList);
+    }
+    async function GetChatroomsWithUser() {
+        const snapshot = await firebase.database().ref("chats").get();
+        const chatrooms = [];
+
+        snapshot.forEach((childSnapshot) => {
+            const participants = childSnapshot.child("participants").val();
+
+            if (participants.includes(userInfo.id.toString())) {
+                chatrooms.push(childSnapshot.key);
+            }
+        });
+
+        return chatrooms;
+    }
+    async function GetContacts(chatroomIds, userInfo) {
+        for (const chatroomId of chatroomIds) {
+            const snapshot = await firebase.database().ref("chats/" + chatroomId).get();
+            const participants = snapshot.child("participants").val();
+
+            const users = [];
+            const contactIds = participants.split(",").map(id => id.trim()).filter(id => id !== userInfo.id.toString());
+            chatwithuserid = contactIds[0]
+            var email = ""
+            for (const contactId of contactIds) {
+                const userSnapshot = await firebase.database().ref('users/' + contactId).once('value');
+                const user = userSnapshot.val();
+                email = user.email
+                users.push(user.username);
+            }
+            var chatType = ""
+            if (users.length > 1) {
+                chatType = "Groupchat"
+            } else {
+                chatType = email
+            }
+
+            let contact = {
+                id: contactIds[0],
+                name: users[0],
+                email: chatType,
+                chatid: chatroomId
+            };
+
+            if (chatType === "Chatroom") {
+                const formattedNames = users.join(', ');
+                contact.name = formattedNames;
+                contact.id = 0;
+            }
+
+            contacts.push(contact);
+        }
+
+        return contacts;
+    }
+
+    // Call this function to load contacts and create contact elements
+    loadContactsAndCreateElements();
+
+
+    //async function GetContacts() {
+        /*
+        const snapshot = await firebase.database().ref("chats").get();
+
+        snapshot.forEach((childSnapshot) => {
+            const participants = childSnapshot.child("participants").val(); // Retrieve the participants string
+
+            if (participants.includes(userInfo.id.toString())) {
+                console.log("User is part of this chat:", childSnapshot.key);
+                chatrooms.push(childSnapshot.key); // Add chatroom key to the chatrooms array
+                var contactsfromchat = participants.toString().split(",").map(id => id.trim()); // Trim whitespace around IDs
+
+                // Iterate through the list of contacts and add new contacts to the contacts array
+                var chatType = ""
+                if (contactsfromchat.length > 2) {
+                    chatType = "Chatroom"
+                }
+                let users = []
+                var conId
+                contactsfromchat.forEach(contactId => {
+                    if (contactId.toString() !== userInfo.id.toString()) {
+                        conId = contactId
+                        firebase.database().ref('users/' + contactId).once('value', (userSnapshot) => {
+                            const user = userSnapshot.val();
+                            if (chatType === "") {
+                                chatType = user.email
+                            }
+                            users.push(user.username)
+                        });
+                    }
+                });
+                let contact = {
+                    id: conId,
+                    name: users[0],
+                    email: chatType,
+                    chatid: childSnapshot.key
+                };
+                if (chatType === "Chatroom") {
+                    const formattedNames = users.join(', ');
+                    contact.name = formattedNames
+                    contact.id = 0
+                }
+                contacts.push(contact);
+            }
+        }); //contacts and chats have been saved at this step
+        //createContactElements(contacts)
+
+        /*
+        firebase.database().ref('chats').on('value', (snapshot) => {
+            snapshot.forEach((chatroomSnapshot) => {
+                const chatroomKey = chatroomSnapshot.key;
+                const chatroom = chatroomSnapshot.val();
+
+                // Check if chatroom has only 2 participants
+                const participants = chatroom.participants.split(',');
+                if (participants.length === 2) {
+                    const otherUserId = participants.filter((participantId) => participantId !== userInfo.id)[0];
+                    console.log(`Chatroom ${chatroomKey} with ${otherUserId}`);
+                    firebase.database().ref('users/' + otherUserId).once('value', (userSnapshot) => {
+                        const user = userSnapshot.val();
+                        const contact = {
+                            id: otherUserId,
+                            name: user.username,
+                            email: user.email,
+                            chatid: chatroom.chatid
+                        };
+                        contacts.push(contact);
+                        createContactElement(contacts);
+                    });
+                } else {
+                    console.log(`Multi-purpose chatroom ${chatroomKey}`);
+                }
+            })
+        })
+    }*/
+
+
+    function GetChat() {
+        // Display messages in chat room
+        firebase.database().ref(`chats/${chatroomKey}/messages`).on('value', (messagesSnapshot) => {
+            messagesSnapshot.forEach((messageSnapshot) => {
+                const messageKey = messageSnapshot.key;
+                const message = messageSnapshot.val();
+
+                // Determine message alignment based on sender
+                const messageClass = message.sender === userId ? 'message-right' : 'message-left';
+
+                // Display message
+                const messageContainer = document.getElementById('message-container');
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', messageClass);
+                messageElement.innerHTML = `
+          <p>${message.text}</p>
+          <span>${message.timestamp}</span>
+        `;
+                messageContainer.appendChild(messageElement);
+            });
+        });
+    }
+    async function SubmitMessage() {
+      const messageInput = document.getElementById('message-input');
+        // Create new message
+      if (chatroomid === 0 && messageInput.value.length > 0) { //create new chat by submitting message with more than 0 letters
+        const chatsRef = firebase.database().ref('chats');
+        chatsRef.once('value', (snapshot) => {
+          let largestChatroomNumber = 0;
+
+          snapshot.forEach((chatSnapshot) => {
+            const chatroomId = chatSnapshot.key;
+            if (chatroomId.startsWith('chatroom')) {
+              const chatroomNumber = parseInt(chatroomId.substring(8));
+              if (chatroomNumber > largestChatroomNumber) {
+                largestChatroomNumber = chatroomNumber;
+              }
+            }
+          });
+
+          const newChatroomNumber = largestChatroomNumber + 1;
+          const newChatroomId = `chatroom${newChatroomNumber}`;
+
+          // Create new chatroom object
+          const newChatroom = {
+            chatid: newChatroomId,
+            participants: `${userInfo.id},${chatwithuserid}`,
+          };
+
+          // Set the new chatroom and its attributes in the database
+          chatsRef.child(newChatroomId).set(newChatroom);
+
+          // Create first message
+          const firstMessage = {
+            sender: userInfo.id,
+            text: messageInput.value,
+            timestamp: new Date().toISOString()
+          };
+
+          // Set the first message in the messages child of the new chatroom
+          chatsRef.child(newChatroomId).child('messages').child('m1').set(firstMessage);
+        chatroomid = newChatroomNumber
+          // Create contact object
+          let contact = {
+            id: chatwithuserid,
+            name: document.getElementById("username-chat").innerHTML,
+            email: "New Chatroom",
+            chatid: newChatroomId
+          };
+          contacts.push(contact);
+          messageInput.value = '';
+
+          // Create contact elements
+          createContactElements(contacts);
+
+          // Load chat with the new contact
+          loadChat(newChatroomId, contact.name, contact.id);
+        });
+
+      } else { //chat has room id
+        if (messageInput.value.length > 0) {
+          const message = {
+            sender: userInfo.id,
+            text: messageInput.value,
+            timestamp: new Date().toISOString(),
+          };
+          // Get a reference to the chat's messages
+          const messagesRef = firebase.database().ref(`chats/${chatroomid}/messages`);
+
+// Query the database to find the largest message number
+          messagesRef.once('value').then((snapshot) => {
+            let largestMessageNumber = 0;
+
+            snapshot.forEach((messageSnapshot) => {
+              const messageId = messageSnapshot.key;
+              if (messageId.startsWith('m')) {
+                const messageNumber = parseInt(messageId.substring(1), 10);
+                if (messageNumber > largestMessageNumber) {
+                  largestMessageNumber = messageNumber;
+                }
+              }
+            });
+
+            // Create the new message ID (e.g., m28 for the next message)
+            const newMessageNumber = largestMessageNumber + 1;
+            const newMessageId = `m${newMessageNumber}`;
+
+            // Create the message object to be pushed to the database
+            const message = {
+              sender: userInfo.id,
+              text: messageInput.value,
+              timestamp: new Date().toISOString(),
+            };
+            var contact
+            contacts.forEach((cor) => {
+              if (cor.chatid === chatroomid) {
+                contact = cor
+              }
+            })
+
+            // Push the new message with the generated ID
+            messagesRef.child(newMessageId).set(message)
+                    .then(() => {
+                      console.log('Message sent successfully');
+                      messageInput.value = '';
+                      loadChat(chatroomid, contact.name, contact.id)
+                    })
+                    .catch((error) => {
+                      console.error('Error sending message:', error);
+                    });
+          });
+
+        }
+      }
+    }
+    function refreshChat() {
+      setInterval(() => {
+        if (chatroomid !== 0) {
+          firebase.database().ref(`chats/${chatroomid}`).once('value', (snapshot) => {
+            // Get the current largest message number in the chatroom
+            let currentLargestMessageNumber = largestMessageNumber;
+            snapshot.child('messages').forEach((messageSnapshot) => {
+              const messageId = messageSnapshot.key;
+              if (messageId.startsWith('m')) {
+                const messageNumber = parseInt(messageId.substring(1), 10);
+                if (messageNumber > currentLargestMessageNumber) {
+                  currentLargestMessageNumber = messageNumber;
+                }
+              }
+            });
+
+            // If the largest message number has changed, update the chat
+            if (currentLargestMessageNumber > largestMessageNumber) {
+              largestMessageNumber = currentLargestMessageNumber;
+              const contactToFind = contacts.find(contact => contact.id === chatwithuserid);
+              loadChat(chatroomid, contactToFind.name, contactToFind.id);
+            }
+          });
+        }
+      }, 5000);
+    }
+</script>
+
+
+<body>
+<header></header>
+
+<main>
+  <div style="display: none" id="new-chat-window">
+    <h2>Type in username and search</h2>
+    <div style="display: block;">
+      <input type="text" placeholder="Search username" id="search-input">
+      <button id="search-btn" onclick="searchUsersAndDisplayResults()">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <p>Results:</p>
+    <div class="search-results">
+      <!---
+      <article class="user-card">
+        <i class="fas fa-user"></i>
+        <p>Username</p>
+      </article>--->
+    </div>
+    <button onclick="hideWindows()">Cancel</button>
+  </div>
+
+  <div style="display: none" id="new-groupchat-window">
+    <h2>Type in username and search</h2>
+    <div style="display: block;">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <p>Results:</p>
+    <div class="search-results">
+      <!---
+      <article class="user-card">
+        <i class="fas fa-user"></i>
+        <p>Username</p>
+      </article>--->
+    </div>
+    <button onclick="hideWindows()">Cancel</button>
+  </div>
+
+  <script>
+
+    function showNewChatWindow() {
+      document.getElementById("new-chat-window").style.display = "flex"
+    }
+    function showNewGroupchatWindow() {
+      document.getElementById("new-groupchat-window").style.display = "flex"
+    }
+    function hideWindows() {
+      document.getElementById("new-chat-window").style.display = "none"
+    }
+
+    function searchUsersAndDisplayResults() {
+      const searchInput = document.getElementById('search-input');
+      const searchResultsContainer = document.querySelector('.search-results');
+      const searchTerm = searchInput.value.toLowerCase(); // Convert to lowercase for case-insensitive search
+
+      // Clear previous search results
+      searchResultsContainer.innerHTML = '';
+
+      // Query the database for usernames matching the search term
+      firebase.database().ref('users').orderByChild('username').startAt(searchTerm).endAt(searchTerm + '\uf8ff').once('value', (snapshot) => {
+        console.log(snapshot.val())
+        snapshot.forEach((userSnapshot) => {
+          const username = userSnapshot.child('username').val();
+          const contentID = userSnapshot.child('contentID').val();
+          const userCard = document.createElement('article');
+
+          console.log(" tanky fanky --- ---- --- ----")
+          console.log(userSnapshot.val())
+          console.log(userSnapshot.child('username').val())
+          userCard.classList.add('user-card');
+          userCard.setAttribute('data-key', userSnapshot.key); // Set data-key for later use
+          //console.log(userSnapshot.key)
+          var isyou = ""
+          if (userSnapshot.key === userInfo.id) {
+            isyou = " (You)"
+          }
+
+          let isClickable = true; // Default to clickable
+          let contactexist
+          contacts.forEach((contact) => {
+            if (contact.name !== "Groupchat" && contact.name === username) {
+              isClickable = false; // A contact with the specified criteria exists, article should not be clickable
+              contactexist = contact
+            }
+          });
+          if (isyou !== "") {
+            userCard.style.cursor = "not-allowed";
+          } else
+          if (isClickable) {
+            userCard.setAttribute('onclick', `newChat('${userSnapshot.key}', '${username}')`);
+          } else { // chat exists
+            userCard.setAttribute('onclick', `loadChat('${contactexist.chatid}', '${contactexist.name}', '${contactexist.id}')`);
+            isyou = ' (In Contacts)'
+          }
+
+          userCard.innerHTML = `
+                <i class="fas fa-user"></i>
+                <p>${username + "-" + contentID + isyou}</p>
+            `;
+          searchResultsContainer.appendChild(userCard);
+        });
+      });
+    }
+
+    function newChat(userid, username) {
+        contacts.forEach((contact) => {
+          if (contact.id === userid) {
+            return
+          }
+        })
+      let messageContainer = document.getElementById('message-container');
+      chatroomid = 0;
+      messageContainer.innerHTML = '';
+      chatwithuserid = userid
+      document.getElementById("username-chat").innerHTML = username
+      document.getElementById('message-input-container').classList.remove('hidden');
+      hideWindows()
+    }
+  </script>
+
+  <aside>
+    <button class="roundwhitebutton" onclick="showNewChatWindow()">New Chat <span>+</span> </button>
+    <button class="roundwhitebutton" onclick="">Groupchat <span>+</span> </button>
+    <h3>Contact List</h3>
+    <ul class="contact-list">
+
+      <div class="loader color_white"></div>
+          <!---
+      <li>
+        <article><img src="https://via.placeholder.com/50" alt="Profile Picture">
+          <div>
+            <h2>User One</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          </div>
+        </article>
+      </li>
+      <li>
+        <article>
+          <img src="https://via.placeholder.com/50" alt="Profile Picture">
+          <div>
+            <h2>User Two</h2>
+            <p>userTwo@email.com</p>
+          </div>
+        </article>
+      </li>--->
+    </ul>
+  </aside>
+  <section id="message-section">
+      <span id="username-chat">New Chat</span>
+    <div id="message-container">
+    </div>
+    <div id="message-input-container" class="hidden">
+      <input type="text" id="message-input" placeholder="Type message here" rows="5" wrap="soft" style="overflow-y: auto;">
+      <button id="send-message-btn" onclick="SubmitMessage()"><i class="fa-regular fa-paper-plane"></i></button>
+    </div>
+
+  </section>
+</main>
+<!--- <footer></footer> --->
+</body>
+</html>

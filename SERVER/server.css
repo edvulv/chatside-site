@@ -1,0 +1,148 @@
+
+body {
+    background: black;
+    color: white;
+    display: grid;
+    grid-template-areas: "main aside"
+                          "section aside";
+    grid-template-columns: 70% 30%;
+    grid-template-rows: auto 50px;
+}
+
+main {
+    grid-area: main;
+    margin: 2rem;
+    border: 1px solid white;
+    overflow-y: auto;
+    padding: 0.5rem;
+    min-height: 250px;
+    max-height: 500px;
+}
+main {
+    scrollbar-width: thin;
+    scrollbar-color: white;
+}
+
+main::-webkit-scrollbar {
+    width: 5px;
+}
+
+main::-webkit-scrollbar-track {
+    background-color: white;
+}
+
+main::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+    background-color: #0077c2;
+}
+
+section {
+    grid-area: section;
+}
+
+#inputs {
+    display: flex;
+}
+
+section #inputs input {
+    transition: 0.4s;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: #191919;
+    color: white;
+    outline: none;
+}
+#inputs input:hover {
+    border: 1px solid purple;
+    border-radius: 10px;
+}
+#inputs input:focus {
+    border: 1px solid blue !important;
+    border-radius: 10px;
+}
+#inputs button {
+    margin-left: 1rem;
+    transition: 0.4s;
+    background: #191919;
+    border-radius: 10px;
+    border: 1px solid gray;
+    color: #00b3e3;
+}
+#inputs button:hover {
+    background: #191919;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+#freq-commands {
+    background-color: #7F7F7F;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+#freq-commands h3 {
+    color: white;
+    font-weight: 600;
+    padding: 0;
+}
+
+#freq-buttons {
+    display: flex;
+}
+
+#freq-buttons .freq-element{
+    margin-right: 1rem;
+    font-size: 1rem;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    background-color: #2B1F38;
+    padding: .5rem;
+    text-decoration: underline transparent;
+    transition: 0.4s;
+}
+
+#freq-buttons .freq-element:hover{
+    color: yellow;
+    text-decoration: underline white;
+}
+
+aside {
+    grid-area: aside;
+    background-color: #7F7F7F;
+    margin: 1rem;
+    padding: 1rem;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    overflow-y: auto;
+    max-height: 40vh;
+}
+
+li {
+    width: 90%;
+    background-color: black;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    transition: 0.1s;
+    color: gray;
+}
+li:hover {
+    color: white;
+}
+li span {
+
+}
+

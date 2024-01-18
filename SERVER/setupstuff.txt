@@ -1,0 +1,64 @@
+stocksimulation : {
+stocks: {
+stockid: {
+name: "infostock",
+price: 1.26,
+historicIncreasePercent: 0,
+history: {
+02-05-23: 1.26,
+03-05-23: 1.26
+}
+}
+},
+investors: {
+userid: {
+stocks: {
+stockid: {
+invested: 300,
+investedprice: 1.26
+}
+}
+}
+}
+}
+
+requests: {
+
+requestID (example: req015305): {
+reqid: "rq_buy",
+userid: "userid",
+stockid: "stockid",
+investment: "1000$",
+stocksbought: 12
+},
+reqid: "rq_sell",
+userid: "userid",
+stockid: "stockid",
+stocksells: 12
+},
+
+}
+
+
+
+I have this commandList: "let commands = [
+    {
+        commands: {
+            start: {
+                server: [
+                    "",
+                    "p:"
+                ]
+            }
+        },
+        response: {
+            default: "Invalid command",
+            start: {
+                server: {
+                    "": "startserver, default",
+                    "p:": "startserver, p"
+                }
+            }
+        }
+    }
+]", if the user 

@@ -1,0 +1,178 @@
+.logout {
+}
+.username {
+    font-weight: 600;
+    padding: 5px;
+    -webkit-border-radius: 25%;
+    transition-duration: 0.3s;
+    text-decoration: none;
+}
+.profile .username {
+    color: #d3d3d3;
+}
+.profile .username:hover {
+    color: #007bff;
+}
+.profile span {
+    margin-right: 1rem;
+}
+.logout button{
+    color: white;
+    font-size: 1.1rem;
+    transition-duration: 0.3s;
+    background-color: transparent;
+    border: none;
+}
+.logout button:hover {
+    font-weight: 300;
+    font-size: 2rem;
+    color: #007bff;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #E56E24;
+    color: #fff;
+    padding: 10px;
+}
+
+.logo a {
+    color: #fff;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.menu li {
+    margin-right: 20px;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.menu i {
+    display: none;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+#hamburger-button {
+    display: none;
+}
+@media (max-width: 1000px) {
+    .logout {
+        /* No specific changes for logout */
+    }
+    #hamburger-button {
+        display: block;
+    }
+
+    .username {
+        font-weight: 600;
+        padding: 5px;
+        -webkit-border-radius: 25%;
+        transition-duration: 0.3s;
+    }
+    .username:hover {
+        color: #007bff;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile span {
+        margin-right: 1rem;
+    }
+
+    .logout button {
+        color: white;
+        font-size: 1.1rem;
+        transition-duration: 0.3s;
+        background-color: transparent;
+        border: none;
+    }
+    .logout button:hover {
+        font-weight: 300;
+        font-size: 2rem;
+        color: #007bff;
+    }
+
+    .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #E56E24;
+        color: #fff;
+        padding: 10px;
+    }
+
+    .logo a {
+        color: #fff;
+        font-size: 3rem;
+        text-decoration: none;
+    }
+
+    .menu {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column; /* Stack items vertically for mobile */
+        position: absolute;
+        top: 70px; /* Adjust the top position */
+        background-color: #E56E24;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        width: 100%; /* Take full width */
+        z-index: 10; /* Ensure menu appears above other elements */
+    }
+    .menu ul {
+        list-style: none;
+        display: none;
+        flex-direction: column; /* Stack items vertically for mobile */
+    }
+
+    .menu i {
+        display: block;
+        align-self: center;
+        padding: 3px;
+    }
+
+    .menu ul.hamburger {
+        display: flex; /* Show the menu on hover */
+    }
+
+    .menu li {
+        margin-right: 0; /* No margin for individual menu items */
+        margin-bottom: 10px; /* Add spacing between menu items */
+    }
+
+    .menu a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .profile {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile img {
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+}

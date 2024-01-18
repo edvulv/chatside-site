@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+    <script src="connect.js"></script>
+    <script src="checkLogin.js"></script>
+    <script src="setUserInfos.js"></script>
+    <script src="logout.js"></script>
+    <script src="query.js"></script>
+    <script type="module" src="start.js"></script>
+
+    <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+    <!----Create Footer And Header from components----->
+
+    <script src="fetchElements.js"></script>
+
+    <meta charset="UTF-8">
+    <title>PickBox</title>
+    <!--<script src="connect.js"></script>--->
+</head>
+
+<style>
+    .contact-list {
+        list-style: none;
+        display: flex;
+    }
+
+    .contact-list article{
+        border: 1px solid black;
+        max-width: 300px;
+    }
+
+    #message-container {
+        border: 1px solid black;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const interval = setInterval(() => {
+            if (window.connectAndCheckCompleted) {
+                clearInterval(interval);
+
+                firebase.database().ref("ping").once("value").then((snapshot) => {
+                    console.log(snapshot.val());
+
+                });
+
+                getContacts()
+            }
+        }, 1000)
+
+    });
+    function handleClick() {
+        getChats(this.id)
+        // Function to be executed when the article is clicked
+        console.log("Article clicked!");
+        // Call your desired function here
+    }
+
+
+
+    async function getUser(userId) {
+        var user;
+        await firebase
+            .database()
+            .ref("users/" + userId)
+            .once("value")
+            .then((snapshot) => {
+                user = snapshot.val();
+            });
+        return user;
+    }
+
+    async function getContacts() {
+        firebase.database().ref("chats").once("value").then((snapshot) => {
+            const chats = snapshot.val();
+            const chatList = [];
+
+            // Iterate over each chat
+            snapshot.forEach((childSnapshot) => {
+                const chatId = childSnapshot.key;
+                const chatData = childSnapshot.val();
+                const participants = chatData.participants.split(", ");
+
+                // Determine the chat type based on the number of participants
+                const chatType = participants.length > 2 ? "Group Chat" : "Individual";
+
+                // Create the chat object
+                const chat = {
+                    id: chatId,
+                    type: chatType,
+                    participants: participants,
+                };
+
+                chatList.push(chat);
+            });
+
+            console.log(chatList);
+            let ulPlacement = document.querySelector(".contact-list");
+            ulPlacement.innerHTML = "";
+            chatList.forEach(async (element) => {
+                var participants = element.participants.toString();
+                var descriptionText = "";
+                if (element.type === "Individual") {
+                    var partId = element.participants.filter(id => id !== userInfo.id);
+                    console.log(partId);
+                    var user = await getUser(partId[0]);
+                    descriptionText = user.email;
+                } else {
+                    descriptionText = element.type;
+                }
+                ulPlacement.innerHTML += `<li>
+                                  <article class="contact" id="${element.id}" ">
+                                    <img src="https://via.placeholder.com/50" alt="Profile Picture">
+                                    <div>
+                                      <h2>${truncateString(participants)}</h2>
+                                      <p>${descriptionText}</p>
+                                    </div>
+                                  </article>
+                                </li>`;
+            });
+            let articleElement = document.querySelector(".contact");
+            articleElement.addEventListener("click", handleClick);
+        });
+    }
+
+    async function getChats(chatId) {
+        firebase.database().ref("chats/" + chatId).once("value").then((snapshot) => {
+            var chat = snapshot.val();
+            const allMessages = []
+            Array.from(chat.messages).forEach((message) => {
+                allMessages.push(message)
+            })
+            console.log(allMessages)
+        })
+    }
+
+    function truncateString(str) {
+        if (str.length > 20) {
+            return str.slice(0, 20) + "...";
+        }
+        return str;
+    }
+
+
+
+</script>
+
+
+<body>
+<header></header>
+
+<main>
+    <aside>
+        <h3>Contact List</h3>
+        <ul class="contact-list">
+        </ul>
+    </aside>
+    <section id="message-section">
+        <p id="message-info" class="hidden">Chat with <span id="message-user">User</span></p>
+        <div id="message-container" class="hidden">
+            <div class="message-left">
+                <p>Hey, how's it going?</p>
+            </div>
+            <div class="message-right">
+                <p>Not bad, thanks. How about you?</p>
+            </div>
+            <div class="message-left">
+                <p>Can't complain. What have you been up to lately?</p>
+            </div>
+            <div class="message-right">
+                <p>Just been busy with work. How about you?</p>
+            </div>
+        </div>
+        <div id="message-input-container" class="hidden">
+            <input type="text" id="message-input" placeholder="Type message here" rows="5" wrap="soft" style="overflow-y: auto;">
+            <button id="send-message-btn" onclick="sendMessage()">Send</button>
+        </div>
+
+    </section>
+</main>
+<footer></footer>
+</body>
+
+
+</html>

@@ -1,0 +1,263 @@
+<!---<!DOCTYPE html>
+<html>
+<head>
+  <title>Three Buttons</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .button {
+      display: inline-block;
+      padding: 20px 30px;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      background-color: blue;
+      border: none;
+      border-radius: 10px;
+      margin: 0 10px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+</body>
+</html>------>
+
+<!----
+Effect worked, but was also trash
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Expandable Div</title>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    .button {
+      padding: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background-color: blue;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+    .outline {
+      display: block;
+      position: relative;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%);
+      height: 2px;
+      width: 100%;
+      background-color: black;
+      border-radius: 2px;
+      transition: height 0.5s ease-out;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .expanded {
+      display: none;
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding: 0;
+      background-color: white;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      transition: height 0.5s ease-out;
+    }
+    .expanded h2 {
+      margin-top: 0;
+      padding: 20px;
+    }
+    .expanded p {
+      margin: 0;
+      padding: 20px;
+    }
+    .expanded.show {
+      display: block;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <button class="button" onclick="toggleDiv()">Toggle Div</button>
+  <div class="outline"></div>
+  <div class="expanded">
+    <h2>Expanded Content</h2>
+    <p>This is the expanded content of the div.</p>
+  </div>
+</div>
+<script>
+  var expanded = false;
+  var div = document.querySelector('.expanded');
+  var outline = document.querySelector('.outline');
+
+  function toggleDiv() {
+    if (!expanded) {
+      // Expand the div
+      outline.style.height = '200px';
+      div.classList.add('show');
+      expanded = true;
+    } else {
+      // Collapse the div
+      outline.style.height = '2px';
+      div.classList.remove('show');
+      expanded = false;
+    }
+  }
+</script>
+</body>
+</html>------>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Expandable Div</title>
+
+  <ul class="contact-list">
+
+    <li>
+      <article><img src="profilepic.png" alt="Profile Picture">
+        <div>
+          <h2>Pikk</h2>
+          <p>pikk@mail.com</p>
+        </div>
+      </article>
+    </li>
+  </ul>
+  <style>
+    body {
+      background-color: #6CA9FF;
+    }
+    /* Style the contact list */
+    .contact-list {
+      list-style: none;
+      overflow-y: scroll;
+      height: 250px;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Style each contact item */
+    .contact-list li {
+      margin-bottom: 10px;
+    }
+
+    /* Style the contact card */
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background-color: #fff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+      border-radius: 10px;
+      transition: background-color 0.4s;
+    }
+
+    .contact-info:hover {
+      background-color: #7F7F7F;
+      color: white;
+    }
+
+    .contact-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+
+    .contact-info h2 {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .contact-info p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  </style>
+
+
+<style>
+.button {
+padding: 10px;
+font-size: 18px;
+font-weight: bold;
+color: white;
+background-color: blue;
+border: none;
+border-radius: 10px;
+cursor: pointer;
+box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+position: relative;
+z-index: 1;
+}
+
+/*CSS code you actually need*/
+.expanded {
+position: relative;
+width: 100%;
+max-height: 0;
+padding: 0;
+box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+transition: max-height 0.5s ease-in-out;
+box-sizing: border-box;
+margin: 0;
+overflow: hidden;
+border: 2px solid black;
+border-radius: 20px;
+}
+.expanded.show {
+max-height: 500px;
+}
+.content-container {
+padding: 20px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<button class="button" onclick="toggleDiv()">Toggle Div</button>
+<!----<div class="outline">
+</div>--->
+  <div class="expanded">
+    <div class="content-container">
+      <h2>Expanded Content</h2>
+      <p>This is the expanded content of the div. This is some more text to show that the div can expand to fit any amount of content.</p>
+      <p>This is the expanded content of the div. This is some more text to show that the div can expand to fit any amount of content.</p>
+    </div>
+  </div>
+</div>
+<script>
+  var expanded = false;
+  var div = document.querySelector('.expanded');
+
+  function toggleDiv() {
+    if (!expanded) {
+      // Expand the div
+      div.classList.add('show');
+      expanded = true;
+    } else {
+      // Collapse the div
+      div.classList.remove('show');
+      expanded = false;
+    }
+  }
+</script>
+</body>
+</html>

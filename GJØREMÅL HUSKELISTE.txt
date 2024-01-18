@@ -1,0 +1,8 @@
+legg til "slett chat" søppelkurv
+
+legg til notifikasjoner og plassering i liste av kontakter
+
+ikke tillat 2 like chatter med de samme folkene
+
+
+loadChat(chatid, contact)

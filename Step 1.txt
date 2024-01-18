@@ -1,0 +1,9 @@
+Step 1:
+kun legg til connect.js til et dokument og dobbeltsjekk at server fungerer
+Step 2:
+
+
+database.ref('users').once('value').then(function(snapshot) {
+        const users = snapshot.val();
+        console.log(users);
+    });

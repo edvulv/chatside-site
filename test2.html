@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contact List</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    aside {
+      width: 25%;
+      height: 100vh;
+      background-color: #eee;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding: 2rem;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      overflow-y: scroll;
+    }
+
+    article {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background-color: #fff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    article img {
+      width: 50px;
+      height: 50px;
+      margin-right: 1rem;
+      border-radius: 50%;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    section {
+      width: 75%;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      background-color: #f1f1f1;
+      box-sizing: border-box;
+      overflow-y: scroll;
+    }
+
+    section input[type="text"] {
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      margin-right: 1rem;
+      width: 80%;
+      font-size: 1rem;
+      outline: 2px solid lightgray;
+      transition-duration: 0.4s;
+    }
+
+    section button {
+      background-color: #007bff;
+      border: none;
+      border-radius: 0.5rem;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 15%;
+    }
+
+    .chat-bubble {
+      max-width: 60%;
+      padding: 0.5rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 1rem;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .user-one {
+      background-color: #007bff;
+      align-self: flex-start;
+    }
+
+    .user-two {
+      background-color: #28a745;
+      align-self: flex-end;
+    }
+    .message-left {
+      display: flex;
+      align-items: flex-end;
+      margin: 10px 0;
+    }
+
+    .message-left p {
+      background-color: #E0E0E0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 80%;
+      margin: 0;
+    }
+
+    .message-right {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: flex-end;
+      margin: 10px 0;
+    }
+
+    .message-right p {
+      background-color: #6CA9FF;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 80%;
+      margin: 0;
+    }
+
+    .contact-list {
+      list-style: none;
+    }
+    #message-section {
+      padding: 0;
+    }
+    #message-container {
+      padding: 2rem;
+    }
+    /*
+      position: absolute;
+      display: flex;*/
+    #message-input-container {
+      background: linear-gradient(to top, rgba(211, 211, 211, 0.9), transparent);
+      padding: 2rem;
+      margin: 0;
+    }
+
+    #message-input {
+      flex-grow: 1;
+      min-width: 22rem;
+      max-width: 60rem;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    #send-message-btn {
+      flex-grow: 0;
+      min-width: 10rem;
+      max-width: 15rem;
+      width: auto;
+    }
+
+  </style>
+</head>
+<body>
+<aside>
+  <h3>Contact List</h3>
+  <ul class="contact-list">
+    <li>
+      <article>
+        <img src="https://via.placeholder.com/50" alt="Profile Picture">
+        <div>
+          <h2>User One</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+      </article>
+    </li>
+    <li>
+      <article>
+        <img src="https://via.placeholder.com/50" alt="Profile Picture">
+        <div>
+          <h2>User Two</h2>
+          <p>userTwo@email.com</p>
+        </div>
+      </article>
+    </li>
+  </ul>
+</aside>
+<section id="message-section">
+  <div id="message-container">
+
+  </div>
+  <div id="message-input-container">
+    <input type="text" id="message-input" placeholder="Type message here" rows="5" wrap="soft" style="overflow-y: auto;">
+    <button id="send-message-btn">Send</button>
+  </div>
+
+</section>
+<footer>
+  <p>© 2023 Contact List App</p>
+</footer>
+</body>
+
+
+</html>

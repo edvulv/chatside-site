@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script type="module" src="start.js"></script>
+
+  <link rel="stylesheet" href="../icons/css/all.css">
+  <title>Opprett Konto - WatchMe.com</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Arial', sans-serif;
+      background-color: #191919;
+      color: white;
+    }
+
+    .centered-container {
+      background-color: black;
+      border-radius: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      border: 2px solid #353535;
+    }
+
+    .profile-pic {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      background-color: #ddd;
+      border: 3px solid #fff;
+      margin: 0 calc(150px - 100px);
+    }
+
+    .plus-icon {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      background-color: #0e5012;
+      border: 3px solid #fff;
+      color: whitesmoke;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .plus-icon i{
+      font-size: 2rem;
+    }
+
+    .logo-container {
+      background-color: black;
+      width: available;
+      border-radius: 10rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid #353535;
+      gap: 2rem;
+      padding: 10px 10px;
+    }
+    .logo-container img {
+      margin: 0;
+    }
+    .logo-img {
+      max-width: 150px; /* Bredde på logoen */
+      height: min-content; /* Holder aspektforholdet til logoen */
+      margin-bottom: 10px; /* Avstand til teksten under */
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 20px; /* Avstand til knappene under */
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px; /* Avstand mellom knappene */
+      border: none;
+      border-radius: 20px; /* Runde kanter på knappene */
+      background-color: #007BFF; /* Blå bakgrunn for knappen */
+      color: white;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    button:hover {
+      background-color: #0056b3; /* Mørkere blå farge når musepekeren er over */
+    }
+  </style>
+</head>
+<body>
+
+<div class="centered-container">
+  <div class="logo-container">
+    <img src="profilepic.png" alt="Profilbilde" class="profile-pic"/>
+    <div class="plus-icon"><i class="fa-solid fa-plus"></i></div>
+    <img class="logo-img" src="../socialMediumPlatform/watchmelogoWhite.png" alt="WatchMe Logo"/>
+  </div>
+  <p>Du har ikke en konto på WatchMe.com, vil du opprette en ved å benytte LOGO kontoen din <span style="font-weight: 800" class="username">username</span> for din Donai konto?</p>
+  <button id="link-account">Ja, knytt konto</button>
+  <button id="return">Returner</button>
+</div>
+
+</body>
+</html>

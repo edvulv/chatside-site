@@ -1,0 +1,38 @@
+
+<script>
+    window.onload = function () {
+        setTimeout(function() {
+            checkCookie(displayUserInfo);
+        }, 100);
+
+        /*
+        setTimeout(() => {
+            if (!userInfo) {
+                console.log("TUMTU")
+                checkCookie(displayUserInfo);
+                return;
+            }
+        }, 100); */
+    };
+
+
+    function displayUserInfo() {
+
+        console.log("thekas")
+        // Check if the logID cookie exists
+        const logID = getCookie('logID');
+        if (!logID) {
+            // If the logID cookie does not exist, redirect to login page
+            window.location.href = 'login.html';
+            return;
+        }
+        const usernameSpan = document.getElementsByClassName("username")
+        console.log(usernameSpan)
+        Array.from(usernameSpan).forEach(element => {
+            console.log(userInfo)
+            element.textContent = userInfo
+        })
+        //usernameSpan.textContent = userInfo.username;
+    }
+
+</script>

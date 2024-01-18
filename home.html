@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+    <script src="connect.js"></script>
+    <script src="checkLogin.js"></script>
+    <script src="setUserInfos.js"></script>
+    <script src="logout.js"></script>
+    <script src="fileupload.js"></script>
+    <script type="module" src="start.js"></script>
+
+    <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+    <!----Create Footer And Header from components----->
+    <script src="createHeaderFooter.js"></script>
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <!--<script src="connect.js"></script>--->
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+<header></header>
+<main>
+    <div class="home-page">
+        <section class="welcome">
+            <h1>Welcome <span class="username">User Name</span></h1>
+            <h2>What do you wanna do?</h2>
+            <div class="selection-container">
+                <button class="selection-button">Send Messages</button>
+                <button class="selection-button">Create Articles</button>
+                <button class="selection-button" onclick="toggleDiv()">Upload Image</button>
+                <a href="messages.html" class="selection-button">Send Messages</a>
+            </div>
+        </section>
+        <div class="expanded">
+            <div class="content-container">
+                <div class="upload-image">
+                    <h1>Image Upload Example</h1>
+                    <form>
+                        <input type="file" id="imageInput">
+                        <button type="button" onclick="uploadImage()">Upload</button>
+                    </form>
+                    <img id="uploadedImage">
+                </div>
+            </div>
+        </div>
+        <section class="articles">
+            <article class="article">
+                <img src="article1.jpg" alt="Article 1" />
+                <h2>Article 1</h2>
+                <a href="#">Read More</a>
+            </article>
+            <article class="article">
+                <img src="article1.jpg" alt="Article 2" />
+                <h2>Article 2</h2>
+                <a href="#">Read More</a>
+            </article>
+            <article class="article">
+                <img src="article1.jpg" alt="Article 3" />
+                <h2>Article 3</h2>
+                <a href="#">Read More</a>
+            </article>
+        </section>
+    </div>
+</main>
+<footer></footer>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+  <script type="module" src="SERVER.js"></script>
+  <script src="commands.js"></script>
+  <meta charset="UTF-8">
+  <title>SERVER</title>
+  <link rel="stylesheet" href="server.css">
+</head>
+<body>
+<main>
+  <!-- content here -->
+</main>
+server ash p:undefined
+<aside>
+  <h3>Command inputs</h3>
+  <h4></h4>
+  <ul id="command-list">
+    <li>server<span> > </span></li>
+    <li>start<span> > </span></li>
+  </ul>
+</aside>
+<section>
+  <div id="inputs">
+    <input type="text" id="inputconsole" placeholder="type command here:">
+    <button id="inputbutton">Submit</button>
+  </div>
+  <div id="freq-commands">
+    <h3>Frequently used commands</h3>
+    <div id="freq-buttons">
+        <button class="freq-element">server connect</button>
+        <button class="freq-element">server stop</button>
+        <button class="freq-element">server restart</button>
+    </div>
+  </div>
+</section>
+
+</body>
+
+<script>
+  const commandList = document.getElementById('command-list');
+  commandList.innerHTML = '';
+  const h4 = document.querySelector('aside h4');
+
+  function updateCommandList() {
+    commandList.innerHTML = '';
+    h4.innerHTML = '';
+    //console.log(input.value)
+    const wordSplit = input.value.split(" ")
+    const numWhitespaces = wordSplit.length - 1;
+    if (input.value === null || input.value === "" || numWhitespaces < 1) {
+      let elementList = []
+      /*console.log(commands)
+      console.log(commands[0].commands)*/
+      Object.keys(commands[0].commands).forEach((key) => {
+        elementList.push(key);
+        //console.log(key);
+      });
+      //console.log(elementList);
+      const commandElements = elementList.map((element) => {
+        const li = document.createElement('li');
+        li.innerText = element;
+        return li;
+      });
+      commandElements.forEach((element) => {
+        commandList.appendChild(element);
+      });
+
+    }
+    else if (numWhitespaces === 1) {
+      let elementList = []
+      let findChildren = wordSplit[0]
+      if (findChildren in commands[0].commands) {
+        Object.keys(commands[0].commands).forEach((key) => {
+          elementList.push(key);
+          //console.log(key);
+        });
+        //console.log(elementList);
+        const commandElements = elementList.map((element) => {
+          const li = document.createElement('li');
+          li.innerText = element;
+          return li;
+        });
+
+        commandElements.forEach((element) => {
+          commandList.appendChild(element);
+        });
+      } else {
+        h4.innerHTML = "No commands found for your search"
+      }
+    }
+
+    /*
+    const inputParts = input.split(' ');
+    let currentCommands = commands[0].commands;
+
+    // Traverse the command tree based on the user's input
+    for (const part of inputParts) {
+      currentCommands = currentCommands[part];
+    }
+
+    // Update the command list and header
+    for (const [key, value] of Object.entries(currentCommands)) {
+      const li = document.createElement('li');
+      li.innerText = key;
+      if (typeof value === 'object') {
+        li.innerHTML += '<span> > </span>';
+      }
+      commandList.appendChild(li);
+    }
+
+    h4.innerText = inputParts.join(' -> ');*/
+  }
+</script>

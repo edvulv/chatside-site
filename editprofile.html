@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script src="fileupload.js"></script>
+  <script type="module" src="start.js"></script>
+
+  <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+  <!----Create Footer And Header from components----->
+  <script src="createHeaderFooter.js"></script>
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="header.css">
+
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <!--<script src="connect.js"></script>--->
+  <link rel="stylesheet" href="default.css">
+  <style>
+
+    :root {
+      --picsize: 150px
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .profile-edit-container {
+      background-color: #fff;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box; /* Sikrer at padding ikke øker bredden */
+    }
+    .form-group input[type="submit"] {
+      background-color: #5cb85c;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .form-group input[type="submit"]:hover {
+      background-color: #4cae4c;
+    }
+    .profile-picture {
+      display: block;
+      margin: 20px auto;
+      border-radius: 50%;
+    }
+    .change-picture {
+      display: block;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    #profile-picture-placement {
+      max-height: var(--picsize);
+      max-width: var(--picsize);
+      height: var(--picsize);
+      width: var(--picsize);
+      border: 3px solid black; /* Tykkere kant som ønsket */
+      border-radius: 50%;
+      overflow: hidden; /* Forhindrer bildet i å gå utenfor den runde kanten */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #profile-picture-placement .profile-picture {
+      height: 100%;
+      width: auto; /* Sørger for at bildet skalerer korrekt */
+      border-radius: 50%; /* Rundt bilde selv om det skulle strekke seg utenfor */
+    }
+  </style>
+</head>
+<body>
+<header></header>
+
+<main>
+  <div class="profile-edit-container">
+    <h2>Rediger Profil - <span class="username">Username</span></h2>
+    <form>
+      <div class="form-group">
+        <label for="username">Brukernavn:</label>
+        <input type="text" id="username-field" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="email-field">E-post:</label>
+        <input type="email" id="email-field" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="profile-picture">Profilbilde:</label>
+        <div id="profile-picture-placement">
+          <img src="profilepic.png" alt="Profilbilde" class="profile-picture">
+        </div>
+        <input type="file" id="profile-picture-input" accept="image/*" onchange="loadFile(event)">
+        <span class="change-picture">Endre bilde</span>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Lagre Endringer">
+      </div>
+    </form>
+  </div>
+</main>
+
+<script>
+  function loadFile(event) {
+    var output = document.querySelector("#profile-picture-placement img")
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function() {
+      URL.revokeObjectURL(output.src) // Frigjør minne når bildet er lastet
+    }
+  }
+
+  function waitForCompletion() {
+    const interval = setInterval(() => {
+      if (window.connectAndCheckCompleted) {
+        clearInterval(interval);
+        loadProfile()
+      }
+    }, 100); // Check every 100 milliseconds
+  }
+
+  waitForCompletion(); // Call this function to start waiting for completion
+
+  function loadProfile() {
+    let inputusr = document.getElementById("username-field")
+    inputusr.value = userInfo.username
+    let inputem = document.getElementById("email-field")
+    inputem.value = userInfo.email
+    let profileImg = document.querySelector("#profile-picture-placement img")
+
+    if (userInfo.img !== undefined) {
+      profileImg.src = userInfo.img;
+    } else {
+      profileImg.url = "profilepic.png"
+    }
+  }
+
+  document.querySelector('.profile-edit-container form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Forhindrer skjemaet fra å sende inn en HTTP request
+
+    // Oppdater brukerdata i Firebase Realtime Database
+    var databaseRef = firebase.database().ref('users/' + userInfo.id);
+    var updates = {
+      username: document.getElementById('username-field').value,
+      email: document.getElementById('email-field').value
+    };
+    databaseRef.update(updates).then(function() {
+      console.log('Brukerinformasjon oppdatert!');
+    }).catch(function(error) {
+      console.error('Det skjedde en feil:', error);
+    });
+
+    // Sjekk om et bilde er valgt
+    var file = document.getElementById('profile-picture-input').files[0];
+    if (file) {
+      // Last opp bildet til Firebase Storage
+      var storageRef = firebase.storage().ref(userInfo.id + '/profileimg');
+      storageRef.put(file).then(function(snapshot) {
+        console.log('Profilbilde lastet opp!');
+
+        // Få URL til det opplastede bildet og oppdater brukerens bilde-URL i databasen
+        snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          databaseRef.update({ img: downloadURL });
+          console.log('Bilde-URL oppdatert i databasen!');
+        });
+      }).catch(function(error) {
+        console.error('Det skjedde en feil under opplasting:', error);
+      });
+    }
+  });
+
+  function fetchImage() {
+    // Lag en referanse til bildet i Firebase Storage
+    const imageRef = storage.ref('BOB2.png'); // Erstatt med den faktiske stien til bildet i Storage
+
+    // Hent nedlastnings-URL for bildet
+    imageRef.getDownloadURL().then(function(url) {
+      // Nå kan du sette denne URL-en som bilde-src i HTML-en din
+      const imgElement = document.getElementById('my-image'); // Pass på at du har et element med id='my-image' i HTML-en din
+      if (imgElement) {
+        imgElement.src = url;
+      }
+    }).catch(function(error) {
+      // Håndter eventuelle feil her
+      console.error('Det oppsto en feil ved henting av bilde:', error);
+    });
+  }
+
+</script>
+
+<footer></footer>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script type="module" src="start.js"></script>
+
+  <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+  <!----Create Footer And Header from components----->
+  <script src="createHeaderFooter.js"></script>
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="header.css">
+
+  <meta charset="UTF-8">
+  <title>Live Calendar Countdowns</title>
+  <!--<script src="connect.js"></script>--->
+  <link rel="stylesheet" href="default.css">
+  <link rel="stylesheet" href="../icons/css/all.css">
+</head>
+<body>
+<header></header>
+<main>
+  <!---
+  <article class="article">
+    <img src="article1.jpg" alt="Article 1" />
+    <h2>Article 1</h2>
+    <a href="#">Read More</a>
+  </article>----->
+  <section class="welcome">
+    <div class="selection-container">
+      <button class="selection-button" onclick="toggleDiv()">Create Live Calendar</button>
+    </div>
+    <div class="expanded">
+      <div class="content-container">
+        <h1>Create New Live Calendar</h1>
+        <form>
+          <label for="event-name">Event Name</label>
+          <input type="text" name="event-name" id="event-name"> <br>
+          <label>Date</label>
+          <select name="event-month" id="event-month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <input type="number" name="event-date" id="event-date" placeholder="Day" min="1" max="31">
+          <label for="event-time">Time</label>
+          <input type="time" name="event-time" id="event-time" placeholder="Time">
+          <input type="number" name="event-year" id="event-year" min="2021" max="2050" placeholder="Year">
+          <br>
+          <button type="button" id="create-calendar-button" onclick="createLiveCalendar()">Create</button>
+        </form>
+      </div>
+    </div>
+    <style>
+      .content-container form{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+      }
+      .content-container form input, .content-container form select{
+        font-size: 2rem;
+      }
+      #create-calendar-button{
+        font-size: 2rem;
+        border-radius: 15px;
+        transition: 0.4s;
+      }
+      #create-calendar-button:hover{
+        color: white;
+        background-color: #00b3e3;
+      }
+    </style>
+  </section>
+
+  <div class="sort-container">
+    <button id="sort-button"><i class="fa-solid fa-arrows-rotate"></i>Sort By</button>
+    <p class="selected">Latest Added</p>
+    <p class="hidden">Next Event</p>
+    <p class="hidden">Last Event</p>
+  </div> <!----<i class="fa-solid fa-arrows-rotate fa-spin"></i>-->
+  <section class="articles">
+  </section>
+
+
+</main>
+
+<style>
+  .live-calendar {
+    background-color: #00b3e3;
+    padding: 1rem;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    position: relative;
+    transition: 0.4s;
+  }
+  .live-calendar .bigger{
+    padding: 2rem;
+    border-radius: 25px;
+    width: 500px;
+    height: 500px;
+    transition: 0.4s;
+  }
+
+  .live-calendar h4{
+    padding: 0;
+    margin: 0;
+  }
+  .live-calendar:hover {
+    background-color: #9AD4E2;
+  }
+  .live-calendar i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    font-size: 2rem;
+  }
+  .live-calendar img {
+    width: 150px;
+    height: auto;
+  }
+
+  .bigger img {
+    width: 0px; !important;
+    height: 0px; !important;
+  }
+
+  .bigger h2 {
+    font-size: 4rem;
+  }
+  .bigger h4 {
+    font-size: 2.5rem;
+  }
+  .bigger p {
+    font-size: 2.5rem;
+  }
+
+  .live-calendar h2 {
+    background: white;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 25px;
+    transition: 0.4s;
+  }
+  .live-calendar h2:hover {
+    color: white;
+    background-color: black;
+  }
+
+  .live-calendar p {
+    background: cornflowerblue;
+    text-align: center;
+    padding: 1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: 0.4s;
+  }
+  .live-calendar p:hover {
+    color: white;
+    background: deepskyblue;
+  }
+  .live-calendar button {
+    background: red;
+    text-align: center;
+    color: white;
+    padding: 5px;
+    font-weight: 600;
+    border-radius: 25px;
+    border: none;
+    transition: 0.4s;
+  }
+
+
+  .expired{
+    background-color: #C63741; !important;
+    transition: 0.4s;
+  }
+  .expired:hover{
+    background-color: #C45C64;
+  }
+
+  .expired h2 {
+    color: white;
+    background-color: black;
+  }
+  .expired p {
+    color: white;
+    background: none;
+    text-decoration: underline;
+  }
+
+  /*Sorting*/
+  .sort-container {
+    display: flex;
+    width: 70%;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+
+  #sort-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin-right: 20px;
+    padding: 0;
+    font-size: 2rem;
+  }
+
+  .sort-container p {
+    margin: 0;
+    font-size: 2rem;
+  }
+
+  p .selected {
+    display: block;
+  }
+  p.hidden {
+    display: none;
+  }
+
+  @keyframes fadeOutMoveDown {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes fadeInMoveDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+</style>
+
+
+<footer></footer>
+
+</body>
+<script>
+  const interval = setInterval(() => {
+    if (window.connectAndCheckCompleted) {
+      clearInterval(interval);
+      // Do something here after connectAndCheckCompleted is true
+      console.log("Connect and check completed!");
+      //calendarsOne()
+      getLiveCalendars()
+    }
+  }, 100); // Check every 100 milliseconds
+
+  const sortButton = document.getElementById("sort-button");
+  const paragraphs = document.querySelectorAll(".sort-container p");
+  let current = 0; let sortmax = 2
+
+  sortButton.addEventListener("click", () => {
+    let next = (current + 1);
+    if (next > sortmax) { next = 0 }
+
+    document.querySelector(".sort-container i").classList.add("fa-spin")
+
+    paragraphs[current].classList.remove("selected");
+    paragraphs[current].classList.add("hidden");
+    paragraphs[next].classList.add("selected");
+    paragraphs[next].classList.remove("hidden");
+
+    paragraphs[current].style.animation = "fadeOutMoveDown 1s";
+    paragraphs[next].style.animation = "fadeInMoveDown 1s";
+
+    paragraphs[current].addEventListener("animationend", () => {
+      paragraphs[current].style.display = "none";
+      paragraphs[current].style.animation = "";
+    });
+
+    current = next;
+    paragraphs[next].addEventListener("animationend", () => {
+      paragraphs[next].style.animation = "";
+
+      setInterval(() => {
+        document.querySelector(".sort-container i").classList.remove("fa-spin");
+      }, 2000);
+
+    });
+  });
+
+
+  function expand(datakey) {
+    const artics = document.querySelectorAll(".live-calendar");
+    artics.forEach((item) => {
+      const isCurrentItem = item.getAttribute("data-key") === datakey;
+      if (isCurrentItem) {
+        item.classList.toggle("bigger")
+      } else {
+        item.classList.remove("bigger");
+        item.querySelector("img").classList.remove("bigger");
+      }
+    });
+  }
+
+
+  async function createLiveCalendar() {
+    const eventName = document.getElementById("event-name").value;
+    const eventMonth = document.getElementById("event-month").value;
+    const eventDate = document.getElementById("event-date").value;
+    const eventTime = document.getElementById("event-time").value;
+    const eventYear = document.getElementById("event-year").value;
+
+    // Check if any of the fields are empty or invalid
+    if (!eventName || !eventMonth || !eventDate || !eventTime || !eventYear) {
+      console.log("All fields must be filled");
+      return; // Exit the function
+    }
+
+    // Additional validation logic can be added here
+
+    // If all validation passes, proceed with calendar creation
+    // Your logic to create the live calendar goes here
+    //2023-09-11T08:46:12
+
+    // Pad month and date with leading zero if less than 10
+    const formattedMonth = eventMonth.padStart(2, "0");
+    const formattedDate = eventDate.padStart(2, "0");
+
+    const date = `${eventYear}-${formattedMonth}-${formattedDate}T${eventTime}:00`;
+    console.log(date);
+
+    try {
+      // Retrieve the existing calendar entries
+      const snapshot = await firebase.database().ref("content/" + userInfo.id + "/livecalendars").once("value");
+      let maxCalendarNumber = 0;
+
+      // Find the largest calendar number
+      snapshot.forEach((snapshotChild) => {
+        const key = snapshotChild.key;
+        if (key.startsWith("calendar")) {
+          const num = parseInt(key.substring(8)); // Extract the number after "calendar"
+          if (!isNaN(num) && num > maxCalendarNumber) {
+            maxCalendarNumber = num;
+          }
+        }
+      });
+
+      // Create the new calendar entry with incremented number
+      const newCalendarNumber = maxCalendarNumber + 1;
+      const newCalendarKey = `calendar${newCalendarNumber}`;
+
+      await firebase.database().ref("content/" + userInfo.id + "/livecalendars").update({
+        [newCalendarKey]: {
+          eventname: eventName,
+          datetime: date
+        }
+      });
+
+      console.log("New calendar created successfully");
+      console.log("Calendar created successfully");
+      var form = document.querySelector(".content-container form")
+      form.innerHTML = "Created Calendar Succesfully!"
+      location.reload();
+    } catch (error) {
+      console.error("Error creating new calendar:", error);
+    }
+  }
+
+  async function getLiveCalendars() {
+    const snapshot = await firebase.database().ref("content/" + userInfo.id + "/livecalendars").once("value");
+    let articles = document.querySelector(".articles")
+    articles.innerHTML = ""
+
+    snapshot.forEach((snapshotChild) => {
+      var datetime = snapshotChild.val().datetime
+      var eventname = snapshotChild.val().eventname
+      let htmlelement = `
+        <article id="${snapshotChild.key}" class="live-calendar" data-key="${datetime}">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+          <img src="clock.png" alt="clock">
+          <h2>Countdown</h2>
+          <h4>To ${eventname}</h4>
+          <p>Date</p>
+          <button onclick="deleteCalendarFromDatabase(${snapshotChild.key})">Delete</button>
+        </article>`
+      articles.innerHTML += htmlelement
+
+    });// id="${}"
+
+    calendarsOne()
+  }
+
+  function calendarsOne() {
+    // Get all elements with the class "live-calendar"
+    const liveCalendarElements = document.querySelectorAll('.live-calendar');
+
+    // Loop through each element and extract the data-key attribute
+    liveCalendarElements.forEach(element => {
+      const dataKey = element.getAttribute('data-key');
+
+      // Parse the data-key value as a Date object
+      const dateObject = new Date(dataKey);
+
+      // Format the date and time as desired (e.g., "15 August 2023, 17:04")
+      const formattedDate = dateObject.toLocaleString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      element.querySelector("p").innerHTML = formattedDate
+
+      // Print the formatted date to the console
+      console.log(formattedDate);
+    });
+
+    // Commented out function call (since startTimer doesn't exist in this example)
+    startTimers();
+  }
+
+  function startTimers() {
+    const liveCalendarElements = document.querySelectorAll('.live-calendar');
+
+    liveCalendarElements.forEach(element => {
+      const dataKey = element.getAttribute('data-key');
+      const targetDate = new Date(dataKey).getTime();
+
+      const countdownElement = element.querySelector('h2');
+
+      const timerInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const timeDifference = targetDate - now;
+
+        if (timeDifference <= 0) {
+          clearInterval(timerInterval);
+          countdownElement.textContent = "Countdown expired";
+          element.classList.add("expired")
+          element.querySelector("button").remove()
+          element.innerHTML += "click to delete"
+          element.addEventListener("click", function () {
+            deleteCalendarFromDatabase(element.getAttribute("id"));
+          });
+        } else {
+          element.addEventListener("click", function () {
+            expand(element.getAttribute("data-key"));
+          });
+          const seconds = Math.floor((timeDifference / 1000) % 60);
+          const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
+          const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+          const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+          const countdownText = `${days} days ${hours} hours ${minutes} min ${seconds} s`;
+          countdownElement.textContent = countdownText;
+        }
+      }, 1000);
+    });
+
+    // Commented out function call (since updateTimers doesn't exist in this example)
+    // updateTimers();
+  }
+
+  async function deleteCalendarFromDatabase(id) {
+    try {
+      // Retrieve the snapshot of the livecalendars node
+      const snapshot = await firebase.database().ref("content/" + userInfo.id + "/livecalendars").once("value");
+
+      // Find the child snapshot with the specified id
+      snapshot.forEach((snapshotChild) => {
+        if (snapshotChild.key === id) {
+          // Remove the child snapshot from the database
+          snapshotChild.ref.remove();
+        }
+      });
+
+      var card = document.querySelector(`#${id}`)
+      card.classList.add('can-be-shrinked');
+      card.classList.add('shrink');
+
+      // Wait for the transition to finish
+      setTimeout(() => {
+        console.log('Element has been shrunk and function continues...');
+        card.remove()
+      }, 1000); // 1000 milliseconds = 1 second
+
+      console.log("Calendar deleted successfully");
+    } catch (error) {
+      console.error("Error deleting calendar:", error);
+    }
+  }
+
+  var expanded = false;
+  function toggleDiv() {
+    var div = document.querySelector('.expanded');
+    if (!expanded) {
+      // Expand the div
+      div.classList.add('show');
+      expanded = true;
+    } else {
+      // Collapse the div
+      div.classList.remove('show');
+      expanded = false;
+    }
+  }
+</script>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Store</title>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script type="module" src="start.js"></script>
+  <script src="datetimeconvert.js"></script>
+
+  <!----Create Footer And Header from components----->
+  <script src="createHeaderFooter.js"></script>
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="header.css">
+
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="default.css">
+  <link rel="stylesheet" href="storestyle.css">
+
+</head>
+<body>
+  <header></header>
+
+  <header class="top-part">
+    <form>
+      <label for="category">Categories:</label>
+      <select id="category">
+        <option value="food">Food</option>
+        <option value="electronics">Electronics</option>
+        <option value="clothes">Clothes</option>
+      </select>
+
+      <label for="price">Price:</label>
+      <select id="price">
+        <option value="highest">Highest</option>
+        <option value="lowest">Lowest</option>
+        <option value="steal">Steal</option>
+      </select>
+
+      <label for="listing">Listing:</label>
+      <select id="listing">
+        <option value="newest">Newest Listings</option>
+        <option value="oldest">Oldest Listings</option>
+        <option value="relevant">Relevant Listings</option>
+      </select>
+
+      <input type="text" placeholder="Search...">
+
+      <button class="buttontype1" type="button" onclick="redirectToCreateListing()">New Listing +</button>
+
+      <!---<button type="button" onclick="createExampleItem()">Add item</button>--->
+      <script>
+
+        function createExampleItem() {
+          const exampleItem = {
+            itemName: "Example Item number 2",
+            category: "Electronics",
+            tags: ["Gadget", "Tech"],
+            price: 99.99,
+            date: "2022-11-6",
+            img: "example_img.jpg",
+            seller: "Brad Pitts",
+            listingTitle: "Better than John doe",
+            description: "He is an idiot, buy my stuff",
+            soldstatus: true,
+          };
+
+          // Add the example item to the Firestore collection named "items"
+          listing = "li023ok84"
+          firebase.database().ref(`store/${listing}`).set(exampleItem)
+                  .then(() => {
+                  })
+                  .catch((error) => {
+                    console.error("Error adding example item to Firebase Firestore:", error);
+                  });
+        }
+
+        document.getElementById("addExampleItem").addEventListener("click", createExampleItem);
+      </script>
+    </form>
+  </header>
+
+  <hr class="separator">
+
+  <main id="items-container">
+    <!-- Example listings -->
+    <!---
+    <article class="item-box">
+      <img src="notfound.png">
+      <h2 class="item-name">Item Example</h2>
+      <p class="item-price">$19.99</p>
+      <p class="item-date">Oct 2022</p>
+    </article>
+    --->
+
+    <!-- Add more example listings here -->
+  </main>
+
+
+  <footer></footer>
+</body>
+<script>
+  window.addEventListener("load", function () {
+    loadStore()
+  });
+
+  function setUser() {
+    let userform = document.querySelector("#login-username")
+    let passform = document.querySelector("#login-password")
+    userform.value = "admin"
+    passform.value = "password123"
+  }
+
+
+  function redirectToCreateListing() {
+    window.location.href = "createlisting.html";
+  }
+
+  function openProductPage(productId) {
+    const url = `smallproductwindow.html?productid=${encodeURIComponent(productId)}`; // URL with productid as a query parameter
+    const windowFeatures = 'height=250,width=400,left=250,top=250'; // Window features
+
+    window.open(url, 'Product Page', windowFeatures);
+  }
+
+  function loadStore() {
+    const loadStoreButton = document.getElementById("loadStoreButton");
+    const container = document.getElementById("items-container")
+
+    container.innerHTML = `<div class="loader"></div>`;
+
+
+    // Simulate a 1-second delay using setTimeout
+    setTimeout(() => {
+      load2(container)
+    }, 1000);
+  }
+
+  async function load2(container) {
+    container.innerHTML = "";
+    let items = []
+    await firebase.database().ref("store").get().then((snapshot) => {
+      snapshot.forEach((el) =>{
+        var parent = el.val();
+        var date = formatToRead(parent.date, true);
+        var image = findImage(parent.img)
+        var htmlelement = `<article class="item-box" id="${parent.id}" >
+      <img src="${image}">
+      <h2 class="item-name">${parent.itemName}</h2>
+      <p class="item-price">${parent.price}$</p>
+      <p class="item-date">${date}</p>
+    </article>`;
+        items.push(htmlelement)
+      })
+    })
+    items.forEach((item) => {
+      container.innerHTML += item
+    })
+    const itemBoxes = document.querySelectorAll('.item-box');
+    itemBoxes.forEach(itemBox => {
+      itemBox.addEventListener('click', () => {
+        const productId = itemBox.id; // Assuming you have set the ID of the element
+        openProductPage(productId);
+      });
+    });
+    // Code to load items (not implemented in this example)
+    // For demonstration, we will simply log a message here
+  }
+</script>
+</html>

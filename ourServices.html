@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script src="fileupload.js"></script>
+  <script type="module" src="start.js"></script>
+
+  <!---<script>connectDB(checkCookie(doNothing))</script>--->
+
+  <!----Create Footer And Header from components----->
+  <script src="createHeaderFooter.js"></script>
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="header.css">
+
+  <meta charset="UTF-8">
+  <title>Services</title>
+  <!--<script src="connect.js"></script>--->
+  <link rel="stylesheet" href="default.css">
+  <style>
+
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin-top: 50px;
+      justify-content: space-between;
+    }
+
+    .service-container {
+      flex: 0 1 calc(33.333% - 20px); /* Tre elementer per rad med gap på 20px */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .service-container a {
+      text-decoration: none; /* Fjerner understreking fra lenker */
+      color: inherit; /* Lenker arver farge fra foreldrelement */
+    }
+    .service-container figure {
+      width: 100%;
+      margin: 0; /* Fjerner standardmargen */
+      border-radius: 15px; /* Runde kanter */
+      overflow: hidden; /* Sørger for at bildene ikke går utenfor de runde kantene */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Legger til skygge for dybde */
+    }
+    .service-container figure {
+      margin: 0; /* Fjerner standardmarg */
+      /* transition: transform 0.3s ease, box-shadow 0.3s ease;Glatt overgang for transform og shadow */
+      transition: 0.3s ease; /* Glatt overgang for transform og shadow */
+    }
+
+    .service-container img {
+      width: 100%;
+      height: auto;
+      display: block; /* Fjerner ekstra plass rundt bildet */
+    }
+
+    .service-container figcaption {
+      text-align: center;
+      padding: 10px;
+      font-size: 1.1em;
+    }
+
+    .service-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .service-header > * {
+      margin: 10px;
+    }
+
+
+    .service-container img {
+      display: block; /* Fjerner ekstra plass under bildet */
+      width: 100%; /* Sørger for at bildet tar full bredde av figuren */
+      transition: box-shadow 0.3s ease; /* Glatt overgang for shadow */
+    }
+
+
+    .service-container figcaption,
+    .service-container .service-description {
+      text-align: center; /* Sentrerer teksten */
+      padding: 5px; /* Litt polstring rundt teksten */
+    }
+
+    .service-container .service-description {
+      display: block; /* Sørger for at span oppfører seg som block-element */
+      font-size: 0.9em; /* Mindre tekststørrelse for beskrivelsen */
+    }
+
+    /* Hover-effekter */
+    .service-container:hover figure {
+      transform: scale(1.05); /* Øker størrelsen litt */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Legger til skygge */
+      border-radius: 40px; /* Runde kanter */
+      color: white;
+    }
+
+    .service-container:hover img {
+      box-shadow: 0 0 15px rgba(0, 0, 255, 0.5); /* Blå glow rundt bildet */
+    }
+
+  </style>
+</head>
+<body>
+
+<header></header>
+
+<div class="service-header">
+  <h1>Our Services</h1>
+  <h2>What are they?</h2>
+  <p>These are different services that you can connect to simply, with your account. The services offer uniqe opportunities, and are waiting for you to join them!</p>
+</div>
+<main>
+
+  <div class="service-container">
+    <a href="messages.html">
+      <figure>
+        <img src="messagelogo2.png" alt="Service 1">
+        <figcaption>Messages</figcaption>
+        <span class="service-description">Service for instant messaging</span>
+      </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a href="countdown.html">
+    <figure>
+      <img src="livecalendarlogo.png" alt="Service 2">
+      <figcaption>Live Calendar</figcaption>
+      <span class="service-description">Live countdowns to events</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a href="store.html">
+    <figure>
+      <img src="itemstorelogo.png" alt="Service 3">
+      <figcaption>Item Store</figcaption>
+      <span class="service-description">Buy and or sell items and merchandise</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="#">
+    <figure>
+      <img src="nologo.png" alt="Service 4">
+      <figcaption>ARTicles</figcaption>
+      <span class="service-description">Local News Articles</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="../socialMediumPlatform/watchmefrontpage.html">
+    <figure>
+      <img src="../socialMediumPlatform/logowbackground.png" alt="Service 4">
+      <figcaption>WhatchMe</figcaption>
+      <span class="service-description">Social Media platform for sharing and teambuilding</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="../GetPassword/home.html">
+    <figure>
+      <img src="../GetPassword/getpasslogo.png" alt="Service 4">
+      <figcaption>GetPassword</figcaption>
+      <span class="service-description">Password service to get and store passwords with enctyption</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="../BUDGET/home.html">
+    <figure>
+      <img src="nologo.png" alt="Service 4">
+      <figcaption>Budgets</figcaption>
+      <span class="service-description">Track budget and spending</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="../Olynda.no/mockup_page.html">
+    <figure>
+      <img src="../Olynda.no/olyndalogo.png" alt="Service 4">
+      <figcaption>Olynda</figcaption>
+      <span class="service-description">No Idea</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="#">
+    <figure>
+      <img src="nologo.png" alt="Service 4">
+      <figcaption>NoteR</figcaption>
+      <span class="service-description">Create Lists and Note diagrams for progress storing</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="../im%20site/InstantMessenger.html">
+    <figure>
+      <img src="nologo.png" alt="Service 4">
+      <figcaption>M&IM's</figcaption>
+      <span class="service-description">Retro Instant Messenger Service</span>
+    </figure>
+    </a>
+  </div>
+
+  <div class="service-container">
+    <a target="_blank" href="../im%20site/InstantMessenger.html">
+    <figure>
+      <img src="nologo.png" alt="Service 4">
+      <figcaption>World Chat</figcaption>
+      <span class="service-description">A global chat where you can chat with anyone</span>
+    </figure>
+    </a>
+  </div>
+</main>
+
+<footer></footer>
+
+</body>
+</html>

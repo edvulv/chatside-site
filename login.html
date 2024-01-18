@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+  <script src="connect.js"></script>
+  <script>connectDB(doNothing())</script>
+
+  <script src="login.js"></script>
+  <script src="generate.js"></script>
+  <script src="query.js"></script>
+  <link rel="stylesheet" href="login.css">
+
+  <!---  <script src="connect.js"></script>  --->
+  <meta charset="UTF-8">
+    <title>Login Page</title>
+
+</head>
+<body>
+<div id="main-container">
+  <h1 id="welcome-title">Welcome</h1>
+  <div id="form-container">
+    <span id="error-message" class="hidden">Error</span>
+    <form id="login-form" class="slide-in-left">
+      <label for="login-username">Username:</label>
+      <input type="text" id="login-username" required>
+      <label for="login-password">Password:</label>
+      <input type="password" id="login-password" required>
+      <input type="submit" value="Login" id="login-btn" onclick="loginValidate()">
+      <button id="register-here-btn">Register Here</button>
+    </form>
+    <form id="register-form" class="slide-out-right hidden">
+      <label for="register-username">Username:</label>
+      <input type="text" id="register-username" required>
+      <label for="register-password">Password:</label>
+      <input type="password" id="register-password" required>
+      <label for="register-email">Email:</label>
+      <input type="email" id="register-email" required>
+      <input type="submit" value="Register" id="register-btn">
+      <button id="login-instead-btn">Login Instead</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+</body>
+<script>
+</script>
+</html>

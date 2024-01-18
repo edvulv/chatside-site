@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Store</title>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.8.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+  <script src="connect.js"></script>
+  <script src="checkLogin.js"></script>
+  <script src="setUserInfos.js"></script>
+  <script src="logout.js"></script>
+  <script src="fileupload.js"></script>
+  <script type="module" src="start.js"></script>
+  <script src="createlisting.js"></script>
+
+
+  <!----Create Footer And Header from components----->
+  <script src="createHeaderFooter.js"></script>
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="header.css">
+
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="default.css">
+  <link rel="stylesheet" href="storestyle.css">
+
+</head>
+<body>
+  <header></header>
+
+  <main>
+    <form>
+      <h1>Create Listing</h1>
+      <input type="text" placeholder="Listing Title" data-key="0">
+      <input type="text" placeholder="Description" data-key="1">
+      <input type="text" placeholder="Item name" data-key="2">
+      <input type="text" placeholder="Category" data-key="3">
+      <p>Picture (choose option below)</p>
+      <div class="pictureframe">
+        <!--
+        <figure> <img src="notfound.png">
+        </figure>
+        <figure> <img src="notfound.png">
+        </figure>--->
+        none<input type="radio" name="picture" data-key="0">default<input type="radio" name="picture" data-key="1" checked>custom<input type="radio" name="picture" data-key="2">
+      </div>
+      <input type="text" placeholder="image-link (press custom to register)" id="link-input">
+      <input type="text" placeholder="Tags" data-key="4">
+      <div class="input-with-icon">
+        <input type="number" placeholder="Price" data-key="5">
+        <span class="dollar-sign">$</span>
+      </div>
+      <div id="submitfield">
+        <p>All fields included <span class="checkbox">X</span> </p>
+        <button class="submit-button" type="button" onclick="commit()" disabled>Submit Listing</button>
+      </div>
+    </form>
+    <div style="display: none" id="submit-window">
+      <div class="submit-load">
+        <div class="loader"></div>
+        <p>Uploading Listing</p>
+      </div>
+      <div class="submit-complete hide">
+        <h2>Listing uploaded successfully</h2>
+        <a href="store.html">Go to store page</a>
+      </div>
+      <div class="submit-failed hide">
+        <h2>OOps, it seems your listing encountered an error, please try again later</h2>
+        <a href="store.html">Go to store page</a>
+        <button onclick="closeWindow()">Return</button>
+      </div>
+    </div>
+  </main>
+
+  <footer></footer>
+
+</body>
+</html>
+<script>
+  let checked = []
+  var cancommit = false
+  window.addEventListener("load", function () {
+    for (var i = 0; i < 6; i++) {
+      checked.push(false)
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const fields = document.querySelectorAll("input[type='text'], input[type='number']");
+    var i = 0
+    fields.forEach(function (field) {
+      const placeholderText = field.getAttribute("placeholder");
+      const placeholderElement = document.createElement("span");
+      placeholderElement.innerText = placeholderText;
+      placeholderElement.className = "placeholder";
+      field.parentNode.insertBefore(placeholderElement, field); // Insert before the input field
+
+
+      const fieldKey = field.getAttribute("data-key"); // Get the data key attribute
+      if (fieldKey === "5") {
+        field.addEventListener("input", function () {
+          if (field.value.length >= 1) {
+            field.classList.add("done");
+            checked[fieldKey] = true;
+          } else {
+            field.classList.remove("done");
+            checked[fieldKey] = false;
+          }
+          checkFields()
+        });
+      } else {
+        field.addEventListener("input", function () {
+          if (field.value.length >= 4) {
+            field.classList.add("done");
+            checked[fieldKey] = true;
+          } else {
+            field.classList.remove("done");
+            checked[fieldKey] = false;
+          }
+          checkFields()
+        });
+      }
+
+      field.addEventListener("focus", function () {
+        placeholderElement.classList.add("active");
+      });
+
+      field.addEventListener("blur", function () {
+        if (!field.value) {
+          placeholderElement.classList.remove("active");
+        }
+      });
+    });
+  });
+
+  function checkFields() {
+    var ischecked = 0
+    checked.forEach((check) => {
+      if (check === true) {
+        ischecked += 1
+      }
+    })
+    var checkbox = document.querySelector("span.checkbox")
+    const submitButton = document.querySelector(".submit-button"); // Replace with your actual submit button ID
+
+    if (ischecked === checked.length) {
+      checkbox.innerHTML = "ok"
+      checkbox.style.color = "green";
+      cancommit = true;
+      submitButton.removeAttribute("disabled"); // Remove the "disabled" attribute
+    } else {
+      checkbox.innerHTML = "X"
+      checkbox.style.color = "red";
+      cancommit = false;
+      submitButton.setAttribute("disabled", "disabled"); // Add the "disabled" attribute
+    }
+  }
+
+  function commit() {
+    if (cancommit) {
+      var listing = generateRandomString()
+      var listingtitle
+      var description
+      var itemname
+      var category
+      var tags
+      var price
+      const fields = document.querySelectorAll("input[type='text'], input[type='number']");
+      fields.forEach(function (field) {
+        const fieldKey = parseInt(field.getAttribute("data-key"));
+        if (fieldKey === 0) { listingtitle = field.value }
+        if (fieldKey === 1) { description = field.value }
+        if (fieldKey === 2) { itemname = field.value }
+        if (fieldKey === 3) { category = field.value }
+        if (fieldKey === 4) { tags = field.value }
+        if (fieldKey === 5) { price = field.value }
+      })
+      var image = ""
+      const radios = document.querySelectorAll("input[type='radio']");
+      radios.forEach(function (radio) {
+        const radiokey = parseInt(radio.getAttribute("data-key"));
+        if (radiokey === 0 && radio.checked) {
+          image = "none"
+        }
+        if (radiokey === 1 && radio.checked) {
+          image = "default"
+        }
+        if (radiokey === 2 && radio.checked) {
+          image = document.querySelector("#link-input").value
+        }
+      })
+      const today = new Date();
+// Get the year, month, and day from the current date
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+      const day = String(today.getDate()).padStart(2, '0');
+// Format the date in "YYYY-MM-DD" format
+      const formattedDate = `${year}-${month}-${day}`;
+
+
+      const newlisting = {
+        id: listing,
+        listingTitle: listingtitle,
+        itemName: itemname,
+        category: category,
+        description: description,
+        price: price,
+        seller: userInfo.username,
+        sellerid: userInfo.id,
+        date: formattedDate,
+        img: image,
+        tags: tags,
+        soldstatus: false,
+      }
+      console.log(newlisting)
+      document.querySelector("#submit-window").style.display = "flex";
+      firebase.database().ref('store/' + listing).set(newlisting)
+              .then(() => {
+                setTimeout(() => {
+                  document.querySelector(".submit-load").style.display = "none"
+                  document.querySelector(".submit-complete").style.display = "flex"
+                }, 1000);
+                //window.location.href = "home.html";
+              })
+              .catch((error) => {
+                console.error("Error creating listing", error);
+                setTimeout(() => {
+                  document.querySelector(".submit-load").style.display = "none"
+                  document.querySelector(".submit-failed").style.display = "flex"
+                }, 1000);
+                return
+                // Handle error here
+              });
+
+      // Then, redirect to home.html
+     // window.location.href = "home.html";
+    }
+  }
+
+  function closeWindow() {
+    document.querySelector("#submit-window").style.display = "none";
+    document.querySelector(".submit-load").style.display = "flex";
+    document.querySelector(".submit-complete").style.display = "none";
+    document.querySelector(".submit-failed").style.display = "none";
+  }
+</script>
+<style>
+  /* Reset default margin and padding */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif; /* Choose a popular and simple font */
+    background-color: white;
+  }
+
+  h1 {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid black;
+  }
+
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: white;
+  }
+
+  form {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    width: 300px;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="radio"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid lightgray;
+    border-bottom: 3px solid red;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 14px;
+    color: black;
+    background-color: white;
+    transition: 0.5s;
+  }
+
+  input[type="text"].done,
+  input[type="number"].done,
+  input[type="radio"].done {
+    border: 1px solid lightgray;
+    border-bottom: 1px solid darkgray;
+  }
+
+  input[type="radio"] {
+    margin-right: 5px;
+  }
+
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="radio"]:focus {
+    outline: none;
+    border-color: #3498db; /* Change border color on focus */
+  }
+
+  p {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .pictureframe {
+    height: auto;
+    width: available;
+    border: 1px solid black;
+    border-radius: 10px;
+    display: flex;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .pictureframe img {
+    min-height: 50px;
+    min-width: 50px;
+    max-height: 100px;
+    max-width: 100px;
+    height: auto;
+    width: auto;
+    flex-shrink: 1;
+
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+  }
+
+  #submitfield {
+    border-top: 2px solid black;
+    padding-top: 1rem;
+  }
+
+  #submitfield p span {
+    border: 1px solid black;
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+
+
+  .submit-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .submit-button:not([disabled]):hover {
+    background-color: #2980b9;
+  }
+
+  .input-with-icon {
+    display: flex;
+    align-items: center;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .input-with-icon input[type="number"] {
+    border: none;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: black;
+    background-color: white;
+    flex: 1;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .dollar-sign {
+    padding: 8px;
+    background-color: lightgray;
+    border: 1px solid lightgray;
+    border-radius: 0 3px 3px 0;
+    border-left: none;
+  }
+
+  .checkbox {
+    color: red;
+  }
+
+  .placeholder {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: lightgray;
+    z-index: -1;
+    transition: transform 0.3s, font-size 0.3s, color 0.3s;
+  }
+
+  /* Add this style for the active state of the placeholder */
+  .placeholder.active {
+    position: relative;
+    transform: translateY(0) scale(0.8);
+    font-size: 14px;
+    color: #3498db;
+    z-index: 1;
+  }
+
+  #submit-window {
+    background-color: white;
+    border: 1px solid lightgray;
+    position: absolute;
+    padding: 3rem;
+    z-index: 2;
+    /*
+    max-height: 500px;
+    max-width: 700px;*/
+    height: 400px;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Box shadow properties */
+  }
+
+  .hide {
+    display: none;
+  }
+</style>
